@@ -416,11 +416,11 @@ onSnapshot(collection(db, 'links'), (snapshot) => {
         // Overview Table
         const tr2 = document.createElement('tr');
         tr2.innerHTML = `
-            <td>${link.name}</td>
-            <td>${link.affiliateEmail}</td>
-            <td>${link.clicks || 0}</td>
-            <td>${link.conversions || 0}</td>
-            <td><strong style="color: var(--secondary)">${cr}%</strong></td>
+            <td data-label="Campaign">${link.name}</td>
+            <td data-label="Affiliate">${link.affiliateEmail}</td>
+            <td data-label="Clicks">${link.clicks || 0}</td>
+            <td data-label="Conversions">${link.conversions || 0}</td>
+            <td data-label="CR"><strong style="color: var(--secondary)">${cr}%</strong></td>
         `;
         overviewLinksTable.appendChild(tr2);
     });

@@ -80,7 +80,7 @@ onAuthStateChanged(auth, async (user) => {
 
             tr.innerHTML = `
                 <td data-label="Campaign">${link.name || 'Unnamed'}</td>
-                <td data-label="URL" style="font-family: monospace; font-size: 0.8rem;">${shortUrl}</td>
+                <td data-label="Short URL" style="font-family: monospace; font-size: 0.8rem;">${shortUrl}</td>
                 <td data-label="Clicks">${clicks}</td>
                 <td data-label="Conversions">${conversions}</td>
                 <td data-label="CR"><strong style="color: var(--secondary)">${cr}%</strong></td>

@@ -11,27 +11,27 @@
 </head>
 
 <body>
-    <nav class="glass"
-        style="padding: 1rem; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; z-index: 1000;">
-        <div style="display: flex; align-items: center; gap: 10px;">
+    <nav class="main-nav glass">
+        <div class="nav-branding">
             <img id="site-logo" src="logo.png" alt="" style="height: 30px;" onerror="this.style.display='none'">
-            <span id="site-name" style="font-weight: 800; font-size: 1.1rem; letter-spacing: -1px;">AMP Mediaz</span>
+            <span id="site-name">AMP Mediaz</span>
         </div>
 
-        <div class="nav-links" style="display: flex; align-items: center; gap: 1.5rem;">
-            <a href="login.html?role=affiliate" class="btn btn-primary"
-                style="padding: 12px 28px; border-radius: 100px;">
-                Affiliate Portal <i class="fas fa-arrow-right"></i>
+        <div class="nav-links">
+            <a href="login.html?role=affiliate" class="btn btn-primary portal-btn">
+                <span>Affiliate Portal</span> <i class="fas fa-arrow-right"></i>
             </a>
         </div>
     </nav>
 
     <div class="hero">
-        <div class="container animate-fade-in" style="text-align: center; max-width: 1000px;">
-            <div
-                style="display: inline-flex; align-items: center; gap: 10px; padding: 10px 20px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 100px; color: var(--primary); font-size: 0.9rem; font-weight: 700; margin-bottom: 3rem;">
-                <span class="badge badge-active" style="padding: 2px 8px;">NEW</span>
-                Real-time Campaign Intelligence 3.0 is Live
+        <div class="container animate-fade-in">
+            <div class="badge-wrapper">
+                <div
+                    style="display: inline-flex; align-items: center; gap: 10px; padding: 10px 20px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 100px; color: var(--primary); font-size: 0.9rem; font-weight: 700;">
+                    <span class="badge badge-active" style="padding: 2px 8px;">NEW</span>
+                    Real-time Campaign Intelligence 3.0 is Live
+                </div>
             </div>
             <h1>Scale Your Performance <br>Beyond Limits.</h1>
             <p>The all-in-one tracking platform designed for high-performance networks. Launch private campaigns,
@@ -52,7 +52,7 @@
 
     <div
         style="padding: 4rem 1rem; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); text-align: center;">
-        <div class="stats-grid" style="max-width: 1000px; margin: 0 auto;">
+        <div class="stats-grid">
             <div class="stat-item">
                 <div class="stat-value" style="font-size: 2.5rem; color: var(--primary);">$42M+</div>
                 <div class="stat-label">Paid to Partners</div>
