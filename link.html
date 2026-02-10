@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .loader-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loader-container">
+        <div class="spinner"></div>
+        <p style="color: var(--text-muted)">Please wait while we redirect you...</p>
+    </div>
+
+    <script type="module">
+        import { db } from './js/firebase-config.js';
+        import {
+            doc,
+            getDoc,
+            updateDoc,
+            increment,
+            addDoc,
+            collection,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const linkId = urlParams.get('l');
+
+        async function handleRedirect() {
+            if (!linkId) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                const linkDocRef = doc(db, 'links', linkId);
+                const linkSnap = await getDoc(linkDocRef);
+
+                if (linkSnap.exists()) {
+                    const linkData = linkSnap.data();
+
+                    // 1. Get IP
+                    let ip = 'Unknown';
+                    try {
+                        const ipRes = await fetch('https://api.ipify.org?format=json');
+                        const ipData = await ipRes.json();
+                        ip = ipData.ip;
+                    } catch (e) { }
+
+                    // 2. Track Activity & Check Ratio
+                    const newClickCount = (linkData.clicks || 0) + 1;
+                    const isConversion = newClickCount % linkData.ratio === 0;
+
+                    await addDoc(collection(db, 'activity'), {
+                        type: isConversion ? 'conversion' : 'click',
+                        linkId: linkId,
+                        linkName: linkData.name || 'Unnamed Link',
+                        affiliateEmail: linkData.affiliateEmail,
+                        timestamp: serverTimestamp(),
+                        ip: ip
+                    });
+
+                    // Update click and conversion counts in the old 'clicks' collection for background stats
+                    await addDoc(collection(db, 'clicks'), {
+                        linkId: linkId,
+                        timestamp: serverTimestamp(),
+                        ip: ip,
+                        converted: isConversion
+                    });
+
+                    // 3. Update Link Stats
+                    const updates = {
+                        clicks: increment(1)
+                    };
+
+                    if (isConversion) {
+                        updates.conversions = increment(1);
+                    }
+
+                    await updateDoc(linkDocRef, updates);
+
+                    // 4. Redirect
+                    window.location.replace(linkData.originalUrl);
+                } else {
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error("Redirect error:", error);
+                // Fallback redirect even if tracking fails (don't block user)
+                window.location.href = 'index.html';
+            }
+        }
+
+        handleRedirect();
+    </script>
+</body>
+
+</html>

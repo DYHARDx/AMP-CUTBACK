@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | AMP Mediaz</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Mobile Toggle Header -->
+    <header class="admin-header glass">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <img id="mobile-logo" src="logo.png" alt="" style="height: 30px;" onerror="this.style.display='none'">
+            <span style="font-weight: 700;">Admin Hub</span>
+        </div>
+        <button class="btn btn-outline" onclick="toggleSidebar()" style="padding: 8px 12px;">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <div
+            style="text-align: center; padding-bottom: 2rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem;">
+            <div
+                style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 16px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);">
+                <img id="admin-logo" src="logo.png" alt="" style="height: 35px;"
+                    onerror="this.src='https://cdn-icons-png.flaticon.com/512/3064/3064155.png'">
+            </div>
+            <h2 id="admin-site-name" style="font-size: 1.1rem; font-weight: 800; letter-spacing: -0.5px;">AMP Mediaz
+            </h2>
+            <p
+                style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-top: 5px;">
+                Management</p>
+        </div>
+
+        <nav style="flex: 1;">
+            <div class="nav-item active" data-tab="dashboard">
+                <i class="fas fa-analytics"></i>
+                <span>Intelligence</span>
+            </div>
+            <div class="nav-item" data-tab="affiliates">
+                <i class="fas fa-user-friends"></i>
+                <span>Affiliates</span>
+            </div>
+            <div class="nav-item" data-tab="links">
+                <i class="fas fa-link-alt"></i>
+                <span>Custom Links</span>
+            </div>
+            <div class="nav-item" data-tab="notifications">
+                <i class="fas fa-bullhorn"></i>
+                <span>Broadcasts</span>
+            </div>
+            <div class="nav-item" data-tab="team">
+                <i class="fas fa-shield-alt"></i>
+                <span>Team Access</span>
+            </div>
+            <div class="nav-item" data-tab="settings">
+                <i class="fas fa-sliders-h"></i>
+                <span>Settings</span>
+            </div>
+        </nav>
+
+        <div style="padding-top: 2rem; border-top: 1px solid var(--border); margin-top: 2rem;">
+            <div class="nav-item" onclick="toggleTheme()" style="background: var(--input-bg); margin-bottom: 1rem;">
+                <i id="theme-icon" class="fas fa-moon"></i>
+                <span>Switch Theme</span>
+            </div>
+            <button id="logout-btn" class="btn btn-outline"
+                style="width: 100%; justify-content: flex-start; border: none; padding: 0.85rem 1.25rem; border-radius: 12px;">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+                <div>
+                    <p style="color: var(--text-muted); margin-bottom: 0.5rem;" id="greeting-time">Good Morning,</p>
+                    <h1 style="font-size: 2.5rem; letter-spacing: -1px;">System Intelligence</h1>
+                </div>
+                <div style="text-align: right;">
+                    <span class="badge badge-active pulse"><i class="fas fa-circle"
+                            style="font-size: 0.5rem; margin-right: 5px;"></i> Live Monitoring</span>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2.5fr 1fr; gap: 2rem;">
+                <!-- Left: Stats & Table -->
+                <div>
+                    <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); gap: 1.25rem;">
+                        <div class="stat-card glass">
+                            <div class="stat-label" style="color: var(--success);"><i class="fas fa-chart-line"></i>
+                                Live Growth</div>
+                            <div id="stat-total-affiliates" class="stat-value">1</div>
+                            <div class="stat-label">Affiliates</div>
+                        </div>
+                        <div class="stat-card glass">
+                            <div class="stat-label" style="color: var(--primary);"><i class="fas fa-network-wired"></i>
+                                Active Nodes</div>
+                            <div id="stat-total-links" class="stat-value">2</div>
+                            <div class="stat-label">Total Links</div>
+                        </div>
+                        <div class="stat-card glass">
+                            <div class="stat-label" style="color: var(--secondary);"><i class="fas fa-globe"></i> Global
+                                Traffic</div>
+                            <div id="stat-total-clicks" class="stat-value">1000</div>
+                            <div class="stat-label">Total Clicks</div>
+                        </div>
+                        <div class="stat-card glass">
+                            <div class="stat-label" style="color: var(--success);"><i class="fas fa-check-double"></i>
+                                Pure Revenue</div>
+                            <div id="stat-total-conversions" class="stat-value">100</div>
+                            <div class="stat-label">Conversions</div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div
+                            style="padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="font-weight: 700;">Performance Snapshot</h3>
+                            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;"
+                                onclick="location.reload()">Refresh Data</button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Link Name</th>
+                                    <th>Affiliate</th>
+                                    <th>Clicks</th>
+                                    <th style="color: var(--secondary);">Conv</th>
+                                    <th>CR %</th>
+                                </tr>
+                            </thead>
+                            <tbody id="overview-links-table">
+                                <!-- Content loaded by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right: Activity Feed -->
+                <div>
+                    <h3 style="margin-bottom: 1.5rem; font-weight: 700;">Real-time Activity</h3>
+                    <div class="glass" style="padding: 1.5rem; min-height: 500px;" id="activity-feed">
+                        <div style="text-align: center; color: var(--text-muted); margin-top: 2rem;">
+                            <i class="fas fa-stream fa-2x" style="margin-bottom: 1rem; opacity: 0.3;"></i>
+                            <p>Analyzing global events...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Affiliates Tab -->
+        <div id="affiliates" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1>Manage Affiliates</h1>
+                <button class="btn btn-primary" onclick="openModal('affiliate-modal')">
+                    <i class="fas fa-user-plus"></i> Add Affiliate
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="affiliates-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Team Tab (New) -->
+        <div id="team" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1>Admin Management</h1>
+                <button class="btn btn-primary" onclick="openModal('admin-user-modal')">
+                    <i class="fas fa-user-shield"></i> Add New Admin
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Last Active</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admins-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Links Tab -->
+        <div id="links" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1>Affiliate Links</h1>
+                <button class="btn btn-primary" onclick="openModal('link-modal')">
+                    <i class="fas fa-plus"></i> Create Link
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Affiliate</th>
+                            <th>Short URL</th>
+                            <th>Ratio</th>
+                            <th>Performance</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="links-table"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Notifications Tab -->
+        <div id="notifications" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1>System Announcements</h1>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem;">
+                <!-- Send Notification -->
+                <div class="glass" style="padding: 2rem; align-self: start;">
+                    <h3 style="margin-bottom: 1.5rem;">Broadcast Message</h3>
+                    <form id="broadcast-form">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" id="notif-title" placeholder="e.g. New Campaign Live!" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Message Content</label>
+                            <textarea id="notif-message" rows="4" placeholder="Enter your detailed announcement..."
+                                required
+                                style="width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; color: var(--text);"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <select id="notif-priority">
+                                <option value="normal">Normal</option>
+                                <option value="high">High (Red Glow)</option>
+                                <option value="low">Low (Ghost)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                            <i class="fas fa-paper-plane"></i> Send to All Affiliates
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Notification History -->
+                <div class="table-container">
+                    <div style="padding: 1rem; border-bottom: 1px solid var(--border);">
+                        <h3 style="font-weight: 600;">Announcement History</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="notif-history-table"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <h1>Branding Settings</h1>
+            <div class="glass" style="padding: 2rem; max-width: 600px; margin-top: 2rem;">
+                <form id="branding-form">
+                    <div class="form-group">
+                        <label>Website Name</label>
+                        <input type="text" id="setting-site-name" placeholder="e.g. AMP Mediaz">
+                    </div>
+                    <div class="form-group">
+                        <label>Logo (PNG/JPG)</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="setting-logo-url" placeholder="Logo URL" readonly>
+                            <button type="button" class="btn btn-outline" onclick="triggerLogoUpload()">Upload</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div id="affiliate-modal" class="modal">
+        <div class="modal-content glass animate-fade-in">
+            <h2 style="margin-bottom: 1.5rem;">Add New Affiliate</h2>
+            <form id="add-affiliate-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="aff-name" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="aff-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="aff-password" required>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" style="flex: 1;"
+                        onclick="closeModal('affiliate-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="link-modal" class="modal">
+        <div class="modal-content glass animate-fade-in">
+            <h2 style="margin-bottom: 1.5rem;">Create Tracking Link</h2>
+            <form id="create-link-form">
+                <div class="form-group">
+                    <label>Link Name (e.g. Summer Sale)</label>
+                    <input type="text" id="link-name" placeholder="Summer Campaign 2026" required>
+                </div>
+                <div class="form-group">
+                    <label>Custom Alias (Optional)</label>
+                    <div style="display: flex; gap: 5px;">
+                        <span
+                            style="display: flex; align-items: center; background: var(--glass); padding: 0 10px; border-radius: 8px; font-size: 0.8rem; color: var(--text-muted);">/</span>
+                        <input type="text" id="link-alias" placeholder="summer26" style="flex: 1;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Original URL</label>
+                    <input type="url" id="link-url" placeholder="https://..." required>
+                </div>
+                <div class="form-group">
+                    <label>Select Affiliate</label>
+                    <select id="link-affiliate" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Conversion Ratio (e.g. 10 = 1 in 10 clicks)</label>
+                    <input type="number" id="link-ratio" value="10" min="1" required>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" style="flex: 1;"
+                        onclick="closeModal('link-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Generate Link</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="edit-link-modal" class="modal">
+        <div class="modal-content glass animate-fade-in">
+            <h2 style="margin-bottom: 1.5rem;">Edit Link & Stats</h2>
+            <form id="edit-link-form">
+                <div class="form-group">
+                    <label>Current Alias / ID</label>
+                    <input type="text" id="edit-link-alias-display" readonly
+                        style="background: rgba(255,255,255,0.05); color: var(--text-muted);">
+                </div>
+                <div class="form-group">
+                    <label>Link Name</label>
+                    <input type="text" id="edit-link-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Original URL</label>
+                    <input type="url" id="edit-link-url" required>
+                </div>
+                <div class="form-group">
+                    <label>Select Affiliate</label>
+                    <select id="edit-link-affiliate" required></select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Clicks (Override)</label>
+                        <input type="number" id="edit-link-clicks" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Conversions (Override)</label>
+                        <input type="number" id="edit-link-conversions" min="0" required>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Conversion Ratio (1 in X)</label>
+                        <input type="number" id="edit-link-ratio" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Calculated CR (%)</label>
+                        <input type="text" id="edit-link-cr-display" readonly
+                            style="background: rgba(255,255,255,0.02); color: var(--secondary); font-weight: bold;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" style="flex: 1;"
+                        onclick="closeModal('edit-link-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Updates</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-user-modal" class="modal">
+        <div class="modal-content glass animate-fade-in">
+            <h2 style="margin-bottom: 1.5rem;">Add Management Admin</h2>
+            <form id="add-admin-form">
+                <div class="form-group">
+                    <label>Admin Name</label>
+                    <input type="text" id="new-admin-name" placeholder="Management Name" required>
+                </div>
+                <div class="form-group">
+                    <label>Admin Email</label>
+                    <input type="email" id="new-admin-email" placeholder="admin@network.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Access Password</label>
+                    <input type="password" id="new-admin-password" placeholder="••••••••" required>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" style="flex: 1;"
+                        onclick="closeModal('admin-user-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Grant Access</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script type="module" src="js/admin.js"></script>
+    <script>
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Close sidebar when clicking menu items on mobile
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth <= 1024) {
+                if (e.target.closest('.nav-item') || (!e.target.closest('.sidebar') && !e.target.closest('.btn-toggle'))) {
+                    sidebar.classList.remove('open');
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
