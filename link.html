@@ -79,26 +79,28 @@
                         ip = ipData.ip;
                     } catch (e) { }
 
-                    // 2. Track Activity & Check Ratio
-                    const newClickCount = (linkData.clicks || 0) + 1;
-                    const isConversion = newClickCount % linkData.ratio === 0;
+                    // 2. Smart CR Enforcement logic
+                    const clicks = (linkData.clicks || 0) + 1;
+                    const convs = linkData.conversions || 0;
+                    const mode = linkData.mode || 'smart'; // Default to smart
+                    let isConversion = false;
 
-                    await addDoc(collection(db, 'activity'), {
-                        type: isConversion ? 'conversion' : 'click',
-                        linkId: linkId,
-                        linkName: linkData.name || 'Unnamed Link',
-                        affiliateEmail: linkData.affiliateEmail,
-                        timestamp: serverTimestamp(),
-                        ip: ip
-                    });
+                    const min = linkData.minCr || 0;
+                    const max = linkData.maxCr || 100;
+                    const targetConv = linkData.batchConv || 1;
+                    const targetClicks = linkData.batchClicks || 10;
+                    const currentCr = clicks > 0 ? (convs / clicks) * 100 : 0;
 
-                    // Update click and conversion counts in the old 'clicks' collection for background stats
-                    await addDoc(collection(db, 'clicks'), {
-                        linkId: linkId,
-                        timestamp: serverTimestamp(),
-                        ip: ip,
-                        converted: isConversion
-                    });
+                    // Unified Smart Logic
+                    if (currentCr < min) {
+                        isConversion = true; // Safe: catch up to min
+                    } else if (currentCr > max) {
+                        isConversion = false; // Safe: don't exceed max
+                    } else {
+                        // In valid range: follow the target ratio
+                        const targetRatio = targetConv / targetClicks;
+                        isConversion = convs < Math.floor(clicks * targetRatio);
+                    }
 
                     // 3. Update Link Stats
                     const updates = {

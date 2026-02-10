@@ -1,5 +1,5 @@
-
 import { auth, db } from './firebase-config.js';
+import { applyBranding } from './branding_engine.js';
 import { checkAuth } from './auth.js';
 import {
     collection,
@@ -40,13 +40,6 @@ onAuthStateChanged(auth, async (user) => {
         greetingEl.innerText = `${greet} ${displayName}`;
     }
 
-    // Load site branding
-    const settingsDoc = await getDoc(doc(db, 'settings', 'branding'));
-    if (settingsDoc.exists()) {
-        const data = settingsDoc.data();
-        if (data.websiteName) document.getElementById('user-site-name').innerText = data.websiteName;
-        if (data.logoUrl) document.getElementById('user-logo').src = data.logoUrl;
-    }
 
     // Load user links
     onSnapshot(query(collection(db, 'links'), where('affiliateEmail', '==', user.email)), (snapshot) => {
@@ -87,9 +80,9 @@ onAuthStateChanged(auth, async (user) => {
                 <td data-label="Created">${createdDate}</td>
             `;
 
-            // Interaction: Open Detail
+            // Interaction: Open Detail Page
             tr.onclick = () => {
-                showLinkDetail(id, link, shortUrl, cr);
+                window.location.href = `campaign.html?id=${id}`;
             };
 
             table.appendChild(tr);
@@ -99,7 +92,6 @@ onAuthStateChanged(auth, async (user) => {
         if (document.getElementById('stat-my-links')) {
             document.getElementById('stat-my-links').innerText = snapshot.size;
             document.getElementById('stat-my-clicks').innerText = totalClicks;
-            document.getElementById('stat-my-conversions').innerText = totalConversions;
 
             const totalCR = totalClicks > 0 ? ((totalConversions / totalClicks) * 100).toFixed(1) + '%' : '0%';
             document.getElementById('stat-my-cr').innerText = totalCR;
@@ -110,6 +102,13 @@ onAuthStateChanged(auth, async (user) => {
             document.getElementById('top-link-name').innerText = top.name || 'Top Link';
             document.getElementById('top-link-clicks').innerText = top.clicks || 0;
             document.getElementById('top-link-conv').innerText = top.conversions || 0;
+
+            // Interaction: Open Top Link Detail
+            document.getElementById('top-link-name').closest('.stat-card').onclick = () => {
+                window.location.href = `campaign.html?id=${top.id}`;
+            };
+            document.getElementById('top-link-name').closest('.stat-card').style.cursor = 'pointer';
+
         } else {
             document.getElementById('top-link-name').innerText = "No Campaigns Yet";
         }
@@ -118,22 +117,10 @@ onAuthStateChanged(auth, async (user) => {
     });
 });
 
-function showLinkDetail(id, data, url, cr) {
-    const detailSection = document.getElementById('detail-section');
-    detailSection.style.display = 'block';
-
-    document.getElementById('detail-title').innerText = data.name;
-    document.getElementById('detail-clicks').innerText = data.clicks || 0;
-    document.getElementById('detail-conversions').innerText = data.conversions || 0;
-    document.getElementById('detail-cr').innerText = cr + '%';
-    document.getElementById('detail-url').value = url;
-
-    // Scroll to detail
-    detailSection.scrollIntoView({ behavior: 'smooth' });
-}
-
-// Global functions for inline usage
-window.showLinkDetail = showLinkDetail;
+// Notifications Navigation
+window.toggleNotifications = () => {
+    window.location.href = 'notifications.html';
+};
 
 // Load Announcements
 const notifFeed = document.getElementById('notifications-feed');

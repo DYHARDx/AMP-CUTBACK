@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Intelligence | AMP Mediaz</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="user-header glass">
+        <div class="header-branding">
+            <img id="user-logo" src="logo.png" alt="" style="height: 30px;"
+                onerror="this.src='https://via.placeholder.com/40x40?text=A'">
+            <div class="header-text">
+                <h2 id="user-site-name" style="font-size: 1rem; font-weight: 700;">AMP Mediaz</h2>
+                <div style="font-size: 0.75rem; color: var(--text-muted); line-height: 1;">
+                    Campaign Data Hub
+                </div>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <a href="dashboard.html" class="btn btn-outline btn-sm">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
+            <button onclick="toggleTheme()" class="btn btn-outline btn-round">
+                <i id="theme-icon" class="fas fa-moon"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="user-container">
+        <div class="dashboard-title-area">
+            <div>
+                <p style="color: var(--text-muted); margin-bottom: 0.5rem;" id="link-affiliate-name">Loading
+                    Affiliate...</p>
+                <h1 class="page-title" id="campaign-title">Analysing Bridge...</h1>
+            </div>
+            <div class="title-badge-wrapper">
+                <span class="badge badge-active pulse">REAL-TIME DATA</span>
+            </div>
+        </div>
+
+        <div class="stats-grid animate-fade-in">
+            <div class="stat-card"
+                style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none;">
+                <div class="stat-label" style="color: rgba(255,255,255,0.8);">Performance Index</div>
+                <div id="campaign-cr" class="stat-value" style="color: white;">0%</div>
+                <div class="stat-label" style="color: rgba(255,255,255,0.6);">Conversion Ratio</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Clicks</div>
+                <div id="campaign-clicks" class="stat-value">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Conversions</div>
+                <div id="campaign-conversions" class="stat-value">0</div>
+            </div>
+        </div>
+
+        <div class="glass" style="padding: 2.5rem; border-radius: 24px; margin-bottom: 2.5rem; position: relative;">
+            <div style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 0.5rem; font-weight: 700;">Your Dedicated Tracking Bridge</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Copy this link and share it across your traffic
+                    networks. Every click is analyzed in milliseconds.</p>
+            </div>
+
+            <div
+                style="display: flex; gap: 15px; background: var(--bg); padding: 10px; border-radius: 16px; border: 1px solid var(--border);">
+                <input type="text" id="campaign-url" readonly
+                    style="flex: 1; border: none; background: transparent; font-family: monospace; font-size: 0.9rem; padding: 10px;">
+                <button class="btn btn-primary" onclick="copyUrl()" style="border-radius: 12px; padding: 0 25px;">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+            </div>
+        </div>
+
+        <div class="table-container animate-fade-in">
+            <div style="padding: 1.5rem; border-bottom: 1px solid var(--border);">
+                <h3 style="font-weight: 700;">System Event Log</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Network Protocol</td>
+                        <td>HTTPS / WSS (Secure)</td>
+                    </tr>
+                    <tr>
+                        <td>Tracking ID</td>
+                        <td id="campaign-id" style="font-family: monospace; color: var(--primary);">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td>Active Status</td>
+                        <td><span class="badge badge-active">Operational</span></td>
+                    </tr>
+                    <tr>
+                        <td>Traffic Origin</td>
+                        <td>Global Nodes Active</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="js/theme.js"></script>
+    <script type="module">
+        import { db } from './js/firebase-config.js';
+        import { doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const campaignId = urlParams.get('id');
+
+        if (!campaignId) {
+            window.location.href = 'dashboard.html';
+        }
+
+        async function loadCampaign() {
+            // Live updates for this specific link
+            onSnapshot(doc(db, 'links', campaignId), (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const shortUrl = `${window.location.origin}/link.html?l=${campaignId}`;
+                    const cr = data.clicks > 0 ? ((data.conversions / data.clicks) * 100).toFixed(1) : '0.0';
+
+                    document.getElementById('campaign-title').innerText = data.name;
+                    document.getElementById('campaign-clicks').innerText = data.clicks || 0;
+                    document.getElementById('campaign-conversions').innerText = data.conversions || 0;
+                    document.getElementById('campaign-cr').innerText = cr + '%';
+                    document.getElementById('campaign-url').value = shortUrl;
+                    document.getElementById('campaign-id').innerText = campaignId;
+                    document.getElementById('link-affiliate-name').innerText = "Affiliate: " + data.affiliateEmail;
+                } else {
+                    alert("Campaign not found.");
+                    window.location.href = 'dashboard.html';
+                }
+            });
+
+            // Load branding
+            const settingsDoc = await getDoc(doc(db, 'settings', 'branding'));
+            if (settingsDoc.exists()) {
+                const data = settingsDoc.data();
+                if (data.websiteName) document.getElementById('user-site-name').innerText = data.websiteName;
+                if (data.logoUrl) document.getElementById('user-logo').src = data.logoUrl;
+            }
+        }
+
+        window.copyUrl = () => {
+            const copyText = document.getElementById("campaign-url");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            alert("Tracking Link Copied!");
+        };
+
+        loadCampaign();
+    </script>
+</body>
+
+</html>

@@ -13,73 +13,32 @@
 
 <body>
     <header class="user-header glass">
-        <!-- Dashboard Branding -->
         <div class="header-branding">
-            <img id="user-logo" src="logo.png" alt="" style="height: 30px;"
-                onerror="this.src='https://via.placeholder.com/40x40?text=A'">
+            <img id="user-logo" src="logo.png" alt="" style="height: 35px;" onerror="this.style.display='none'">
             <div class="header-text">
-                <h2 id="user-site-name" style="font-size: 1rem; font-weight: 700;">AMP Mediaz</h2>
-                <div id="display-name" style="font-size: 0.75rem; color: var(--text-muted); line-height: 1;">
-                    Portal Dashboard
-                </div>
+                <span class="text-gradient" id="user-site-name"
+                    style="font-size: 1.1rem; font-weight: 800; letter-spacing: -0.5px;">AMP Mediaz</span>
+                <div id="display-name"
+                    style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                    Partner Terminal</div>
             </div>
         </div>
 
         <div class="header-actions">
-            <button onclick="toggleNotifications()" class="btn btn-outline btn-round">
+            <a href="notifications.html" class="btn btn-outline btn-round" title="Notifications">
                 <i class="fas fa-bell"></i>
                 <span id="notif-badge"></span>
-            </button>
-            <button onclick="toggleTheme()" class="btn btn-outline btn-round">
+            </a>
+            <button onclick="toggleTheme()" class="btn btn-outline btn-round" title="Toggle Theme">
                 <i id="theme-icon" class="fas fa-moon"></i>
             </button>
-            <button id="logout-btn" class="btn btn-outline btn-sm">
-                <i class="fas fa-sign-out-alt"></i> <span class="logout-text">Logout</span>
+            <button id="logout-btn" class="btn btn-primary btn-sm">
+                <i class="fas fa-sign-out-alt"></i> <span class="logout-text">Disconnect</span>
             </button>
         </div>
     </header>
 
     <main class="user-container">
-        <!-- Performance Detail Section (Initially Hidden) -->
-        <div id="detail-section" class="performance-detail">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h2 id="detail-title">Link Performance</h2>
-                <button class="btn-close" onclick="closeDetail()"><i class="fas fa-times"></i></button>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card detail-card">
-                    <div class="stat-label">Link Status</div>
-                    <div id="detail-status" class="stat-value" style="font-size: 1.5rem;">Active</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Link Clicks</div>
-                    <div id="detail-clicks" class="stat-value">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Link Conversions</div>
-                    <div id="detail-conversions" class="stat-value">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Conversion Rate</div>
-                    <div id="detail-cr" class="stat-value">0%</div>
-                </div>
-            </div>
-
-            <div class="glass" style="padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
-                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.8rem;">Your
-                    Tracking URL</label>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="detail-url" readonly style="flex: 1; background: rgba(255,255,255,0.05);">
-                    <button class="btn btn-primary" onclick="copyDetailUrl()">Copy</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Notifications Section -->
-        <div id="notifications-feed" style="margin-bottom: 2rem; display: none;">
-            <!-- Notifications will appear here -->
-        </div>
 
         <div class="dashboard-title-area">
             <div>
@@ -93,29 +52,28 @@
 
         <div class="stats-grid">
             <!-- Spotlight Card -->
-            <div class="stat-card"
-                style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none;">
-                <div style="position: relative; z-index: 2;">
-                    <div class="stat-label" style="color: rgba(255,255,255,0.8);">Top Campaign</div>
-                    <div id="top-link-name" class="stat-value" style="font-size: 1.5rem; color: white;">Loading...</div>
-                    <div style="display: flex; gap: 15px; margin-top: 1rem; font-size: 0.85rem;">
-                        <span><i class="fas fa-mouse-pointer"></i> <span id="top-link-clicks">0</span> Clicks</span>
-                        <span><i class="fas fa-check-circle"></i> <span id="top-link-conv">0</span> Conv.</span>
-                    </div>
+            <div class="stat-card spotlight">
+                <div class="stat-label" style="color: rgba(255,255,255,0.7);"><i class="fas fa-crown"></i> Prime Asset
+                </div>
+                <div id="top-link-name" class="stat-value" style="font-size: 1.75rem; margin: 0.5rem 0;">Loading...
+                </div>
+                <div class="spotlight-metrics">
+                    <span><i class="fas fa-mouse-pointer"></i> <span id="top-link-clicks">0</span></span>
+                    <span><i class="fas fa-check-circle"></i> <span id="top-link-conv">0</span></span>
                 </div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-label">Total Links</div>
-                <div id="stat-my-links" class="stat-value">0</div>
+                <div class="stat-label">Deployments</div>
+                <div id="stat-my-links" class="stat-value text-gradient">0</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Total Clicks</div>
-                <div id="stat-my-clicks" class="stat-value">0</div>
+                <div class="stat-label">Engagement</div>
+                <div id="stat-my-clicks" class="stat-value text-gradient">0</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Avg. Conversion</div>
-                <div id="stat-my-cr" class="stat-value">0%</div>
+                <div class="stat-label">Efficiency</div>
+                <div id="stat-my-cr" class="stat-value" style="color: var(--success);">0%</div>
             </div>
         </div>
 

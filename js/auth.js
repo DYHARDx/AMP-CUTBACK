@@ -1,5 +1,5 @@
-
 import { auth, db } from './firebase-config.js';
+import { applyBranding } from './branding_engine.js';
 import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
@@ -20,20 +20,6 @@ const DEFAULT_ADMIN = {
     role: "admin"
 };
 
-// Load Branding for Login
-const loadBranding = async () => {
-    try {
-        const brandingDoc = await getDoc(doc(db, 'settings', 'branding'));
-        if (brandingDoc.exists()) {
-            const data = brandingDoc.data();
-            const loginLogo = document.getElementById('login-logo');
-            if (loginLogo && data.logoUrl) loginLogo.src = data.logoUrl;
-        }
-    } catch (e) {
-        console.error("Logo load error:", e);
-    }
-};
-loadBranding();
 
 
 // Bootstrap Admin automatically
@@ -95,24 +81,6 @@ if (loginForm) {
                     await auth.signOut();
                     throw new Error("Your account is deactivated.");
                 }
-
-                // Log Login Activity
-                try {
-                    let ip = 'Unknown';
-                    try {
-                        const ipRes = await fetch('https://api.ipify.org?format=json');
-                        const ipData = await ipRes.json();
-                        ip = ipData.ip;
-                    } catch (e) { }
-
-                    await addDoc(collection(db, 'activity'), {
-                        type: 'login',
-                        email: email,
-                        userName: userData.name || email,
-                        ip: ip,
-                        timestamp: serverTimestamp()
-                    });
-                } catch (e) { console.error("Activity log error:", e); }
 
                 // Redirect based on role
                 if (userData.role === 'admin') {

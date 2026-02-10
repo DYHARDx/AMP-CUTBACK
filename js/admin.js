@@ -46,22 +46,10 @@ navItems.forEach(item => {
 onAuthStateChanged(auth, async (user) => {
     if (!user) return;
 
-    // Branding
+    // Branding form population
     const settingsDoc = await getDoc(doc(db, 'settings', 'branding'));
     if (settingsDoc.exists()) {
         const data = settingsDoc.data();
-        if (data.websiteName) {
-            document.getElementById('admin-site-name').innerText = data.websiteName;
-            const mobileSiteName = document.querySelector('.admin-header span');
-            if (mobileSiteName) mobileSiteName.innerText = data.websiteName;
-        }
-        if (data.logoUrl) {
-            document.getElementById('admin-logo').src = data.logoUrl;
-            const mobileLogo = document.querySelector('.admin-header img');
-            if (mobileLogo) mobileLogo.src = data.logoUrl;
-        }
-
-        // Populate settings form
         if (document.getElementById('setting-site-name')) {
             document.getElementById('setting-site-name').value = data.websiteName || '';
             document.getElementById('setting-logo-url').value = data.logoUrl || '';
@@ -85,74 +73,7 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// Live Activity Feed
-const activityFeed = document.getElementById('activity-feed');
-if (activityFeed) {
-    // We listen to the latest 60 to have a buffer for deletion
-    onSnapshot(query(collection(db, 'activity'), orderBy('timestamp', 'desc'), limit(60)), async (snapshot) => {
-        if (snapshot.empty) return;
-
-        // Auto-cleanup: If more than 50 docs, delete the oldest ones
-        if (snapshot.size > 50) {
-            const docsToDelete = snapshot.docs.slice(50);
-            docsToDelete.forEach(async (docSnap) => {
-                try {
-                    await deleteDoc(doc(db, 'activity', docSnap.id));
-                } catch (e) { console.error("Cleanup error:", e); }
-            });
-        }
-
-        activityFeed.innerHTML = '';
-        // Only show 50 in UI
-        snapshot.docs.slice(0, 50).forEach((doc) => {
-            const data = doc.data();
-            const div = document.createElement('div');
-            div.className = 'activity-item animate-fade-in';
-
-            const type = data.type || 'click';
-            const time = data.timestamp?.toDate ? data.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Soon';
-
-            let icon = 'fa-mouse-pointer';
-            let color = 'var(--primary)';
-            let title = 'New Click Detected';
-            let subtitle = `${data.linkName || 'Unknown Link'} • ${data.affiliateEmail || 'Unknown User'}`;
-            let meta = data.ip || 'Remote IP';
-
-            if (type === 'conversion') {
-                icon = 'fa-check-circle';
-                color = 'var(--success)';
-                title = 'New Conversion';
-            } else if (type === 'login') {
-                icon = 'fa-user-check';
-                color = '#f59e0b';
-                title = 'User Login';
-                subtitle = data.userName || data.email;
-                meta = `IP: ${data.ip || 'Unknown'}`;
-            } else if (type === 'broadcast') {
-                icon = 'fa-bullhorn';
-                color = 'var(--secondary)';
-                title = 'System Announcement';
-                subtitle = data.title;
-                meta = 'Sent to all affiliates';
-            }
-
-            div.innerHTML = `
-                <div class="activity-icon" style="background: ${color}20; color: ${color}">
-                    <i class="fas ${icon}"></i>
-                </div>
-                <div style="flex: 1;">
-                    <p style="font-size: 0.85rem; font-weight: 600;">${title}</p>
-                    <p style="font-size: 0.75rem; color: var(--text-muted);">${subtitle}</p>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 0.7rem; font-weight: 600;">${time}</div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); opacity: 0.7;">${meta}</div>
-                </div>
-            `;
-            activityFeed.appendChild(div);
-        });
-    });
-}
+// --- Branding ---
 
 // --- Branding ---
 const brandingForm = document.getElementById('branding-form');
@@ -181,35 +102,6 @@ brandingForm.addEventListener('submit', async (e) => {
     alert("Branding updated!");
     location.reload();
 });
-
-// Logo Upload Logic
-const logoInput = document.createElement('input');
-logoInput.type = 'file';
-logoInput.accept = 'image/*';
-logoInput.style.display = 'none';
-document.body.appendChild(logoInput);
-
-window.triggerLogoUpload = () => logoInput.click();
-
-logoInput.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    try {
-        const { getStorage, ref, uploadBytes, getDownloadURL } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js");
-        const storage = getStorage();
-        const logoRef = ref(storage, 'brand/logo.png');
-
-        const snapshot = await uploadBytes(logoRef, file);
-        const url = await getDownloadURL(snapshot.ref);
-
-        document.getElementById('setting-logo-url').value = url;
-        alert("Logo uploaded! Click 'Save Changes' to apply.");
-    } catch (error) {
-        alert("Upload failed: " + error.message);
-    }
-});
-
 
 // --- Affiliates ---
 const affiliatesTable = document.getElementById('affiliates-table');
@@ -430,6 +322,39 @@ onSnapshot(collection(db, 'links'), (snapshot) => {
     document.getElementById('stat-total-conversions').innerText = totalConversions;
 });
 
+// --- Link Management UI Helpers ---
+window.updateLinkModeUI = (modalType) => {
+    const isEdit = modalType === 'edit';
+    const prefix = isEdit ? 'edit-' : '';
+    const mode = document.getElementById(`${prefix}link-mode`).value;
+
+    // Hide all
+    document.getElementById(`${prefix}mode-fixed-fields`).style.display = 'none';
+    document.getElementById(`${prefix}mode-range-fields`).style.display = 'none';
+    document.getElementById(`${prefix}mode-batch-fields`).style.display = 'none';
+
+    // Show active
+    document.getElementById(`${prefix}mode-${mode}-fields`).style.display = 'grid';
+};
+
+// Sync CR and Ratio for Fixed mode
+const syncCrRatio = (crId, ratioId) => {
+    const crInput = document.getElementById(crId);
+    const ratioInput = document.getElementById(ratioId);
+    if (!crInput || !ratioInput) return;
+
+    crInput.addEventListener('input', () => {
+        const cr = parseFloat(crInput.value) || 0;
+        if (cr > 0) ratioInput.value = Math.round(100 / cr);
+    });
+    ratioInput.addEventListener('input', () => {
+        const ratio = parseInt(ratioInput.value) || 1;
+        crInput.value = (100 / ratio).toFixed(1);
+    });
+};
+
+// Link Management logic
+
 window.deleteLink = async (id) => {
     if (confirm("Delete this link?")) {
         await deleteDoc(doc(db, 'links', id));
@@ -442,7 +367,11 @@ createLinkForm.addEventListener('submit', async (e) => {
     const name = document.getElementById('link-name').value;
     const originalUrl = document.getElementById('link-url').value;
     const affiliateEmail = document.getElementById('link-affiliate').value;
-    const ratio = parseInt(document.getElementById('link-ratio').value);
+    const minCr = parseFloat(document.getElementById('link-cr-min').value) || 10;
+    const maxCr = parseFloat(document.getElementById('link-cr-max').value) || 15;
+    const batchConv = parseInt(document.getElementById('link-batch-conv').value) || 50;
+    const batchClicks = parseInt(document.getElementById('link-batch-clicks').value) || 1000;
+
     const customAlias = document.getElementById('link-alias').value.trim();
 
     let shortId = customAlias;
@@ -470,7 +399,11 @@ createLinkForm.addEventListener('submit', async (e) => {
             name,
             originalUrl,
             affiliateEmail,
-            ratio,
+            mode: 'smart',
+            minCr,
+            maxCr,
+            batchConv,
+            batchClicks,
             alias: customAlias || null,
             clicks: 0,
             conversions: 0,
@@ -488,16 +421,18 @@ createLinkForm.addEventListener('submit', async (e) => {
 // --- Edit Link Logic ---
 const editClicksInput = document.getElementById('edit-link-clicks');
 const editConversionsInput = document.getElementById('edit-link-conversions');
-const editRatioInput = document.getElementById('edit-link-ratio');
+const editTargetConv = document.getElementById('edit-link-batch-conv');
+const editTargetClicks = document.getElementById('edit-link-batch-clicks');
 const editCrDisplay = document.getElementById('edit-link-cr-display');
 
 const updateEditCalculations = (source) => {
     const clicks = parseInt(editClicksInput.value) || 0;
-    const ratio = parseInt(editRatioInput.value) || 1;
-    const conversions = parseInt(editConversionsInput.value) || 0;
+    const tConv = parseInt(editTargetConv.value) || 1;
+    const tClicks = parseInt(editTargetClicks.value) || 10;
 
-    if (source === 'clicks' || source === 'ratio') {
-        const autoConversions = Math.floor(clicks / ratio);
+    if (source === 'clicks' || source === 'batch') {
+        const ratio = tConv / tClicks;
+        const autoConversions = Math.floor(clicks * ratio);
         editConversionsInput.value = autoConversions;
     }
 
@@ -507,7 +442,8 @@ const updateEditCalculations = (source) => {
 };
 
 editClicksInput.addEventListener('input', () => updateEditCalculations('clicks'));
-editRatioInput.addEventListener('input', () => updateEditCalculations('ratio'));
+editTargetConv.addEventListener('input', () => updateEditCalculations('batch'));
+editTargetClicks.addEventListener('input', () => updateEditCalculations('batch'));
 editConversionsInput.addEventListener('input', () => updateEditCalculations('conversions'));
 
 window.openEditLinkModal = async (id) => {
@@ -518,9 +454,13 @@ window.openEditLinkModal = async (id) => {
         document.getElementById('edit-link-name').value = link.name;
         document.getElementById('edit-link-url').value = link.originalUrl;
         document.getElementById('edit-link-affiliate').value = link.affiliateEmail;
+        document.getElementById('edit-link-cr-min').value = link.minCr || 10;
+        document.getElementById('edit-link-cr-max').value = link.maxCr || 15;
+        document.getElementById('edit-link-batch-conv').value = link.batchConv || 50;
+        document.getElementById('edit-link-batch-clicks').value = link.batchClicks || 1000;
+
         editClicksInput.value = link.clicks || 0;
         editConversionsInput.value = link.conversions || 0;
-        editRatioInput.value = link.ratio;
 
         updateEditCalculations('init');
         document.getElementById('edit-link-modal').style.display = 'flex';
@@ -536,16 +476,23 @@ editLinkForm.addEventListener('submit', async (e) => {
     const affiliateEmail = document.getElementById('edit-link-affiliate').value;
     const clicks = parseInt(document.getElementById('edit-link-clicks').value);
     const conversions = parseInt(document.getElementById('edit-link-conversions').value);
-    const ratio = parseInt(document.getElementById('edit-link-ratio').value);
+    const minCr = parseFloat(document.getElementById('edit-link-cr-min').value);
+    const maxCr = parseFloat(document.getElementById('edit-link-cr-max').value);
+    const batchConv = parseInt(document.getElementById('edit-link-batch-conv').value);
+    const batchClicks = parseInt(document.getElementById('edit-link-batch-clicks').value);
 
     try {
         await updateDoc(doc(db, 'links', id), {
             name,
             originalUrl,
             affiliateEmail,
+            mode: 'smart',
+            minCr,
+            maxCr,
+            batchConv,
+            batchClicks,
             clicks,
             conversions,
-            ratio,
             updatedAt: serverTimestamp()
         });
 
@@ -572,13 +519,6 @@ if (broadcastForm) {
                 title,
                 message,
                 priority,
-                timestamp: serverTimestamp()
-            });
-
-            // Log activity
-            await addDoc(collection(db, 'activity'), {
-                type: 'broadcast',
-                title: title,
                 timestamp: serverTimestamp()
             });
 
