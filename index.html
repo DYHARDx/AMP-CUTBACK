@@ -4,118 +4,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The World's Elite Affiliate Network | AMP Mediaz</title>
+    <title>AMP Mediaz | Elite Affiliate Intelligence Ecosystem</title>
+    <meta name="description"
+        content="The world's most advanced affiliate tracking and optimization platform. Built for high-performance networks.">
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --blob-p: rgba(99, 102, 241, 0.4);
+            --blob-s: rgba(236, 72, 153, 0.4);
+        }
+
+        .blob-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            filter: blur(100px);
+        }
+
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: var(--blob-p);
+            animation: move 20s infinite alternate;
+        }
+
+        .blob-2 {
+            top: 40%;
+            right: -100px;
+            background: var(--blob-s);
+            animation-duration: 25s;
+            animation-delay: -5s;
+        }
+
+        @keyframes move {
+            from {
+                transform: translate(-10%, -10%);
+            }
+
+            to {
+                transform: translate(20%, 20%);
+            }
+        }
+
+        .hero-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(to bottom, var(--text) 50%, var(--text-muted));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-card {
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            background: rgba(var(--p-rgb), 0.05);
+            transform: translateY(-10px);
+        }
+
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3rem !important;
+            }
+
+            .hero-btns {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .hero-btns .btn {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <nav class="main-nav glass">
-        <div class="nav-branding">
-            <img id="site-logo" src="logo.png" alt="" style="height: 30px;" onerror="this.style.display='none'">
-            <span id="site-name">AMP Mediaz</span>
-        </div>
+    <div class="blob-container">
+        <div class="blob"></div>
+        <div class="blob blob-2"></div>
+    </div>
 
-        <div class="nav-links">
-            <a href="login.html?role=affiliate" class="btn btn-primary portal-btn">
-                <span>Affiliate Portal</span> <i class="fas fa-arrow-right"></i>
-            </a>
+    <nav class="main-nav glass">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding: 0;">
+            <div class="nav-branding">
+                <img id="site-logo" src="logo.png" alt="AMP Logo" style="height: 35px;"
+                    onerror="this.onerror=null; this.src='https://via.placeholder.com/35x35?text=A'">
+                <span id="site-name" class="text-gradient">AMP MEDIAZ</span>
+            </div>
+
+            <div class="nav-links">
+                <a href="login.html?role=affiliate" class="btn btn-primary portal-btn">
+                    <span>Partner Console</span> <i class="fas fa-terminal"></i>
+                </a>
+            </div>
         </div>
     </nav>
 
     <header class="hero">
-        <div class="container animate-fade-in">
-            <div class="badge-wrapper">
-                <div class="badge-pill">
-                    <span class="badge badge-active">NEW</span>
-                    <span>Campaign Intelligence 3.0 is Live</span>
+        <div class="container animate-fade-in" style="text-align: center;">
+            <div class="badge-wrapper" style="margin-bottom: 2rem;">
+                <div class="badge-pill" style="backdrop-filter: blur(10px); background: rgba(var(--p-rgb), 0.08);">
+                    <span class="badge badge-active" style="padding: 4px 10px;">V3.0 REDESIGN</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Military-Grade Tracking Protocol
+                        Active</span>
                 </div>
             </div>
-            <h1>The World's Elite <br><span class="text-gradient">Affiliate Ecosystem</span></h1>
-            <p>Empowering high-performance networks with military-grade tracking, real-time analytics, and automated
-                optimization. Scale without limits.</p>
+            <h1 class="hero-title"
+                style="font-size: 5.5rem; line-height: 1; margin-bottom: 1.5rem; font-weight: 800; letter-spacing: -4px;">
+                Engineered for <br><span class="text-gradient">Dominance.</span>
+            </h1>
+            <p
+                style="font-size: 1.35rem; max-width: 700px; margin: 0 auto 3rem; color: var(--text-muted); font-weight: 400; line-height: 1.6;">
+                The next generation of affiliate intelligence. Sub-millisecond tracking, AI-driven conversion
+                optimization, and a partner ecosystem built for scale.
+            </p>
 
-            <div class="hero-actions">
+            <div class="hero-btns" style="display: flex; gap: 1.25rem; justify-content: center;">
                 <a href="login.html?role=affiliate" class="btn btn-primary btn-lg">
-                    Launch Portal <i class="fas fa-arrow-right"></i>
+                    Access Portal <i class="fas fa-bolt"></i>
                 </a>
-                <a href="#features" class="btn btn-outline btn-lg">
-                    Explore Ecosystem
+                <a href="#vision" class="btn btn-outline btn-lg" style="border-radius: 100px;">
+                    Our Ecosystem
                 </a>
             </div>
         </div>
     </header>
 
-    <div
-        style="padding: 4rem 1rem; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); text-align: center;">
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-value" style="font-size: 2.5rem; color: var(--primary);">$42M+</div>
-                <div class="stat-label">Paid to Partners</div>
+    <section id="vision" style="padding: 10rem 1rem; border-top: 1px solid var(--border); background: var(--surface);">
+        <div class="container">
+            <div class="section-title">
+                <span class="text-gradient"
+                    style="font-weight: 800; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 3px;">Network
+                    Metrics</span>
+                <h2 style="font-size: 3.5rem; margin-top: 1rem; letter-spacing: -2px;">Unrivaled Performance</h2>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" style="font-size: 2.5rem; color: var(--primary);">99.9%</div>
-                <div class="stat-label">Link Uptime</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" style="font-size: 2.5rem; color: var(--primary);">150+</div>
-                <div class="stat-label">Global Offers</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" style="font-size: 2.5rem; color: var(--primary);">24/7</div>
-                <div class="stat-label">Dedicated Support</div>
-            </div>
-        </div>
-    </div>
 
-    <section id="features" class="container" style="padding: 8rem 0;">
-        <div class="section-title">
-            <span class="text-gradient"
-                style="font-weight: 700; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 2px;">Core
-                Architecture</span>
-            <h2 style="font-size: 3.5rem; margin-top: 1rem;">Engineered for Precision</h2>
-        </div>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="feature-icon primary"><i class="fas fa-bolt"></i></div>
-                <h3>Real-time Tracking</h3>
-                <p>Proprietary edge-computing redirects ensure sub-millisecond latency for every click.</p>
-            </div>
-            <div class="stat-card">
-                <div class="feature-icon secondary"><i class="fas fa-shield-alt"></i></div>
-                <h3>Fraud Guard</h3>
-                <p>Advanced IP fingerprinting and proxy detection keeps your traffic clean and high-quality.</p>
-            </div>
-            <div class="stat-card">
-                <div class="feature-icon success"><i class="fas fa-chart-pie"></i></div>
-                <h3>Smart Distribution</h3>
-                <p>Dynamic ratio controls allow you to optimize conversion flow with surgical precision.</p>
+            <div class="stats-grid grid-4-col">
+                <div class="stat-card"
+                    style="text-align: center; border: none; background: transparent; box-shadow: none;">
+                    <div class="stat-value text-gradient" style="font-size: 3.5rem;">$45M+</div>
+                    <div class="stat-label">Net Partner Payouts</div>
+                </div>
+                <div class="stat-card"
+                    style="text-align: center; border: none; background: transparent; box-shadow: none;">
+                    <div class="stat-value text-gradient" style="font-size: 3.5rem;">99.9%</div>
+                    <div class="stat-label">System Continuity</div>
+                </div>
+                <div class="stat-card"
+                    style="text-align: center; border: none; background: transparent; box-shadow: none;">
+                    <div class="stat-value text-gradient" style="font-size: 3.5rem;">12ms</div>
+                    <div class="stat-label">Average Response</div>
+                </div>
+                <div class="stat-card"
+                    style="text-align: center; border: none; background: transparent; box-shadow: none;">
+                    <div class="stat-value text-gradient" style="font-size: 3.5rem;">24/7</div>
+                    <div class="stat-label">Elite Ops Support</div>
+                </div>
             </div>
         </div>
     </section>
 
-    <footer style="padding: 6rem 2rem 4rem; text-align: center; border-top: 1px solid var(--border);">
-        <div style="margin-bottom: 3rem;">
-            <img src="logo.png" alt="" style="height: 40px; margin-bottom: 1rem;" onerror="this.style.display='none'">
-            <h2 style="font-size: 1.5rem; color: var(--text);">AMP Mediaz</h2>
+    <section style="padding: 8rem 1rem; position: relative;">
+        <div class="container">
+            <div class="grid-2-1" style="align-items: center; gap: 5rem;">
+                <div class="scroll-reveal">
+                    <span class="text-gradient"
+                        style="font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px;">Smart
+                        Tracking</span>
+                    <h2 style="font-size: 3rem; margin: 1.5rem 0; font-weight: 800; letter-spacing: -1.5px;">Beyond
+                        Standard <br>Analytics.</h2>
+                    <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2.5rem; line-height: 1.8;">
+                        Our proprietary bridge technology uses edge-computing to validate traffic quality before it even
+                        reaching the offer. Zero drop-off, maximum conversion.
+                    </p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li
+                            style="margin-bottom: 1rem; display: flex; align-items: center; gap: 12px; font-weight: 600;">
+                            <i class="fas fa-check-circle" style="color: var(--success);"></i> Adaptive Ratio Control
+                            (ARC)
+                        </li>
+                        <li
+                            style="margin-bottom: 1rem; display: flex; align-items: center; gap: 12px; font-weight: 600;">
+                            <i class="fas fa-check-circle" style="color: var(--success);"></i> Multi-Layer Fraud Guard
+                        </li>
+                        <li
+                            style="margin-bottom: 1rem; display: flex; align-items: center; gap: 12px; font-weight: 600;">
+                            <i class="fas fa-check-circle" style="color: var(--success);"></i> Dynamic Path Optimization
+                        </li>
+                    </ul>
+                </div>
+                <div class="scroll-reveal" style="position: relative;">
+                    <div class="glass" style="padding: 3rem; border-radius: 30px; border: 1px solid var(--primary);">
+                        <div style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted);">
+                            <div style="color: var(--primary);">// Initialize Tracking Protocol</div>
+                            <div>const payload = {</div>
+                            <div style="padding-left: 20px;">timestamp: Date.now(),</div>
+                            <div style="padding-left: 20px;">latency: "0.012ms",</div>
+                            <div style="padding-left: 20px;">status: "OPTIMIZED",</div>
+                            <div style="padding-left: 20px;">cr_boost: 14.2%</div>
+                            <div>};</div>
+                            <br>
+                            <div style="color: var(--secondary);">Protocol.execute(payload);</div>
+                        </div>
+                    </div>
+                    <div
+                        style="position: absolute; -right: 20px; -bottom: 20px; width: 100px; height: 100px; background: var(--primary); border-radius: 20px; z-index: -1; opacity: 0.2; transform: rotate(15deg);">
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div style="display: flex; gap: 2.5rem; justify-content: center; margin-bottom: 4rem;">
-            <a href="#" style="color: var(--text-muted); text-decoration: none;">Privacy</a>
-            <a href="#" style="color: var(--text-muted); text-decoration: none;">Terms</a>
-            <a href="#" style="color: var(--text-muted); text-decoration: none;">Contact</a>
-            <a href="login.html?role=admin"
-                style="color: var(--primary); font-weight: 700; text-decoration: none;">Admin Access</a>
+    <footer style="padding: 10rem 1rem 4rem; background: var(--surface); border-top: 1px solid var(--border);">
+        <div class="container">
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 4rem; margin-bottom: 6rem;">
+                <div style="grid-column: span 2;">
+                    <div class="nav-branding" style="margin-bottom: 1.5rem;">
+                        <span id="site-name" class="text-gradient" style="font-size: 1.8rem;">AMP MEDIAZ</span>
+                    </div>
+                    <p style="color: var(--text-muted); max-width: 350px; line-height: 1.7;">
+                        The premier destination for high-performance affiliates. Engineered for precision, built for
+                        scale, and committed to your growth.
+                    </p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1.5rem; font-weight: 700;">ecosystem</h4>
+                    <ul style="list-style: none; padding: 0; display: grid; gap: 10px;">
+                        <li><a href="#" style="color: var(--text-muted); text-decoration: none;">Campaign
+                                Intelligence</a></li>
+                        <li><a href="#" style="color: var(--text-muted); text-decoration: none;">Partner Console</a>
+                        </li>
+                        <li><a href="#" style="color: var(--text-muted); text-decoration: none;">API Access</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1.5rem; font-weight: 700;">Legal</h4>
+                    <ul style="list-style: none; padding: 0; display: grid; gap: 10px;">
+                        <li><a href="#" style="color: var(--text-muted); text-decoration: none;">Privacy Protocol</a>
+                        </li>
+                        <li><a href="#" style="color: var(--text-muted); text-decoration: none;">Service Terms</a></li>
+                        <li><a href="login.html?role=admin"
+                                style="color: var(--primary); font-weight: 700; text-decoration: none;">Admin Access</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div
+                style="padding-top: 3rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <p style="color: var(--text-muted); font-size: 0.9rem;">
+                    &copy; 2026 AMP MEDIAZ Intelligence. All rights reserved.
+                </p>
+                <div style="display: flex; gap: 1.5rem; font-size: 1.2rem; color: var(--text-muted);">
+                    <i class="fab fa-twitter"></i>
+                    <i class="fab fa-linkedin"></i>
+                    <i class="fab fa-github"></i>
+                </div>
+            </div>
         </div>
-
-        <p style="color: var(--text-muted); font-size: 0.85rem;">
-            &copy; 2026 <span class="site-name-text">AMP Mediaz</span> Solutions. All rights reserved.
-        </p>
     </footer>
 
     <script src="js/theme.js"></script>
     <script type="module" src="js/branding_engine.js"></script>
+    <script>
+        // Simple scroll reveal
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+    </script>
 </body>
 
 </html>

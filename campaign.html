@@ -45,20 +45,27 @@
             </div>
         </div>
 
-        <div class="stats-grid animate-fade-in">
+        <div class="stats-grid grid-4-col animate-fade-in">
             <div class="stat-card"
                 style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none;">
-                <div class="stat-label" style="color: rgba(255,255,255,0.8);">Performance Index</div>
+                <div class="stat-label" style="color: rgba(255,255,255,0.8);">Efficiency Index</div>
                 <div id="campaign-cr" class="stat-value" style="color: white;">0%</div>
-                <div class="stat-label" style="color: rgba(255,255,255,0.6);">Conversion Ratio</div>
+                <div class="stat-label" style="color: rgba(255,255,255,0.6);">Conversion Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Click Ratio</div>
+                <div id="campaign-ratio" class="stat-value text-gradient">1:1</div>
+                <div class="stat-label">Loss Prevention</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Total Clicks</div>
                 <div id="campaign-clicks" class="stat-value">0</div>
+                <div class="stat-label">Global Traffic</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Total Conversions</div>
+                <div class="stat-label">Conversions</div>
                 <div id="campaign-conversions" class="stat-value">0</div>
+                <div class="stat-label">Verified Actions</div>
             </div>
         </div>
 
@@ -129,13 +136,15 @@
             onSnapshot(doc(db, 'links', campaignId), (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    const shortUrl = `${window.location.origin}/link.html?l=${campaignId}`;
+                    const currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+                    const shortUrl = `${window.location.origin}${currentPath}/r/?l=${campaignId}`;
                     const cr = data.clicks > 0 ? ((data.conversions / data.clicks) * 100).toFixed(1) : '0.0';
 
                     document.getElementById('campaign-title').innerText = data.name;
                     document.getElementById('campaign-clicks').innerText = data.clicks || 0;
                     document.getElementById('campaign-conversions').innerText = data.conversions || 0;
                     document.getElementById('campaign-cr').innerText = cr + '%';
+                    document.getElementById('campaign-ratio').innerText = `1:${data.ratio || 1}`;
                     document.getElementById('campaign-url').value = shortUrl;
                     document.getElementById('campaign-id').innerText = campaignId;
                     document.getElementById('link-affiliate-name').innerText = "Affiliate: " + data.affiliateEmail;

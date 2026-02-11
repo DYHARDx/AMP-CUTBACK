@@ -271,7 +271,8 @@ onSnapshot(collection(db, 'links'), (snapshot) => {
 
     docs.forEach((link) => {
         const id = link.id;
-        const shortUrl = `${window.location.origin}/link.html?l=${id}`;
+        const currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+        const shortUrl = `${window.location.origin}${currentPath}/r/?l=${id}`;
         const cr = link.clicks > 0 ? ((link.conversions / link.clicks) * 100).toFixed(1) : '0.0';
 
         totalClicks += link.clicks || 0;
@@ -283,26 +284,57 @@ onSnapshot(collection(db, 'links'), (snapshot) => {
             createdDate = link.createdAt.toDate().toLocaleDateString();
         }
         tr.innerHTML = `
-            <td data-label="Link Name">${link.name}</td>
-            <td data-label="Affiliate">${link.affiliateEmail}</td>
-            <td data-label="Short URL" style="font-family: monospace; font-size: 0.8rem;">${shortUrl}</td>
-            <td data-label="Ratio">1:${link.ratio}</td>
-            <td data-label="Stats">
-                <div style="font-size: 0.8rem;">${link.clicks || 0} clks / ${link.conversions || 0} conv</div>
-                <div class="stat-label">CR: ${cr}%</div>
+            <td data-label="Campaign Identity">
+                <div style="font-weight: 700; color: var(--text);">${link.name}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">UID: ${id}</div>
             </td>
-            <td data-label="Created">${createdDate}</td>
-            <td data-label="Actions">
-                <div style="display: flex; gap: 5px; justify-content: flex-end;">
-                    <button class="btn btn-outline" style="padding: 4px 8px;" onclick="openEditLinkModal('${id}')">
-                        <i class="fas fa-edit"></i>
+            <td data-label="Partner Information">
+                <div style="font-size: 0.9rem;">${link.affiliateEmail}</div>
+            </td>
+            <td data-label="Tracking Link" style="font-family: monospace; font-size: 0.8rem;">
+                <div class="glass" style="padding: 4px 8px; display: inline-block; border-radius: 8px; background: rgba(var(--p-rgb), 0.05);">
+                    ${shortUrl}
+                </div>
+            </td>
+            <td data-label="Network Status">
+                <span class="badge badge-active"><i class="fas fa-signal" style="font-size: 0.6rem;"></i> LIVE</span>
+            </td>
+            <td data-label="Deployment Date">
+                <div style="font-size: 0.85rem;">${createdDate}</div>
+            </td>
+            <td data-label="Command Center">
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                    <button class="btn btn-outline btn-sm copy-btn" title="Secure Copy">
+                        <i class="fas fa-copy"></i>
                     </button>
-                    <button class="btn btn-outline" style="padding: 4px 8px; color: var(--danger);" onclick="deleteLink('${id}')">
-                        <i class="fas fa-trash"></i>
+                    <button class="btn btn-primary btn-sm analytics-btn" title="Data Intelligence">
+                        <i class="fas fa-chart-line"></i>
+                    </button>
+                    <button class="btn btn-outline btn-sm" onclick="openEditLinkModal('${id}')" title="Configure">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="btn btn-outline btn-sm" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2);" onclick="deleteLink('${id}')" title="Purge Link">
+                        <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
             </td>
         `;
+
+        // Copy logic for admin table
+        const copyBtn = tr.querySelector('.copy-btn');
+        copyBtn.onclick = () => {
+            navigator.clipboard.writeText(shortUrl).then(() => {
+                const icon = copyBtn.querySelector('i');
+                icon.className = 'fas fa-check';
+                setTimeout(() => icon.className = 'fas fa-copy', 2000);
+            });
+        };
+
+        const analyticsBtn = tr.querySelector('.analytics-btn');
+        analyticsBtn.onclick = () => {
+            window.location.href = `campaign.html?id=${id}`;
+        };
+
         linksTable.appendChild(tr);
 
         // Overview Table
@@ -313,7 +345,21 @@ onSnapshot(collection(db, 'links'), (snapshot) => {
             <td data-label="Clicks">${link.clicks || 0}</td>
             <td data-label="Conversions">${link.conversions || 0}</td>
             <td data-label="CR"><strong style="color: var(--secondary)">${cr}%</strong></td>
+            <td data-label="Actions" style="text-align: right;">
+                 <button class="btn btn-outline btn-sm copy-btn-ov" title="Copy URL"><i class="fas fa-copy"></i></button>
+                 <button class="btn btn-primary btn-sm analytics-btn-ov" title="View Analytics"><i class="fas fa-chart-bar"></i></button>
+            </td>
         `;
+
+        tr2.querySelector('.copy-btn-ov').onclick = () => {
+            navigator.clipboard.writeText(shortUrl).then(() => {
+                alert('Copied to clipboard!');
+            });
+        };
+        tr2.querySelector('.analytics-btn-ov').onclick = () => {
+            window.location.href = `campaign.html?id=${id}`;
+        };
+
         overviewLinksTable.appendChild(tr2);
     });
 

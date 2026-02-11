@@ -55,7 +55,8 @@ onAuthStateChanged(auth, async (user) => {
 
         docs.forEach((link) => {
             const id = link.id;
-            const shortUrl = `${window.location.origin}/link.html?l=${id}`;
+            const currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+            const shortUrl = `${window.location.origin}${currentPath}/r/?l=${id}`;
             const clicks = link.clicks || 0;
             const conversions = link.conversions || 0;
             const cr = clicks > 0 ? ((conversions / clicks) * 100).toFixed(1) : '0.0';
@@ -72,16 +73,57 @@ onAuthStateChanged(auth, async (user) => {
             }
 
             tr.innerHTML = `
-                <td data-label="Campaign">${link.name || 'Unnamed'}</td>
-                <td data-label="Short URL" style="font-family: monospace; font-size: 0.8rem;">${shortUrl}</td>
-                <td data-label="Clicks">${clicks}</td>
+                <td data-label="Active Identity">
+                    <div style="font-weight: 700; color: var(--text);">${link.name || 'Unnamed'}</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); opacity: 0.7;">CAMPAIGN ACTIVE</div>
+                </td>
+                <td data-label="Live Network URL" style="font-family: monospace; font-size: 0.8rem;">
+                    <div class="glass" style="padding: 4px 8px; display: inline-block; border-radius: 8px; background: rgba(var(--p-rgb), 0.05);">
+                        ${shortUrl}
+                    </div>
+                </td>
+                <td data-label="Global Hits">${clicks}</td>
                 <td data-label="Conversions">${conversions}</td>
-                <td data-label="CR"><strong style="color: var(--secondary)">${cr}%</strong></td>
-                <td data-label="Created">${createdDate}</td>
+                <td data-label="Efficiency"><strong style="color: var(--secondary)">${cr}%</strong></td>
+                <td data-label="Performance">
+                    <span class="badge badge-active" style="font-size: 0.65rem; padding: 4px 10px;">
+                        <i class="fas fa-check-circle"></i> OPERATIONAL
+                    </span>
+                </td>
+                <td data-label="Tactical Command" style="text-align: right;">
+                    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                        <button class="btn btn-outline btn-sm copy-btn" title="Rapid Copy">
+                            <i class="fas fa-rocket"></i>
+                        </button>
+                        <button class="btn btn-primary btn-sm analytics-btn" title="Data Insight">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </td>
             `;
 
-            // Interaction: Open Detail Page
-            tr.onclick = () => {
+            // Row click for details
+            tr.onclick = (e) => {
+                if (!e.target.closest('.btn')) {
+                    window.location.href = `campaign.html?id=${id}`;
+                }
+            };
+
+            // Copy logic
+            const copyBtn = tr.querySelector('.copy-btn');
+            copyBtn.onclick = (e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(shortUrl).then(() => {
+                    const icon = copyBtn.querySelector('i');
+                    icon.className = 'fas fa-check';
+                    setTimeout(() => icon.className = 'fas fa-copy', 2000);
+                });
+            };
+
+            // Analytics logic
+            const analyticsBtn = tr.querySelector('.analytics-btn');
+            analyticsBtn.onclick = (e) => {
+                e.stopPropagation();
                 window.location.href = `campaign.html?id=${id}`;
             };
 

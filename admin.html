@@ -29,13 +29,13 @@
         </button>
         <div class="sidebar-header">
             <div class="logo-box">
-                <img id="admin-logo" src="logo.png" alt="" onerror="this.style.display='none'">
+                <img id="admin-logo" src="logo.png" alt="Logo" onerror="this.style.display='none'">
             </div>
             <h2 id="admin-site-name" class="text-gradient">AMP Mediaz</h2>
-            <span class="version-tag">OS 3.0</span>
+            <span class="version-tag">CONTROL V3.0</span>
         </div>
 
-        <nav style="flex: 1;">
+        <nav style="flex: 1; margin-top: 1rem;">
             <div class="nav-item active" data-tab="dashboard">
                 <i class="fas fa-chart-pie"></i>
                 <span>Intelligence</span>
@@ -62,15 +62,15 @@
             </div>
         </nav>
 
-        <div style="padding-top: 2rem; border-top: 1px solid var(--border); margin-top: 2rem;">
-            <div class="nav-item" onclick="toggleTheme()" style="background: var(--input-bg); margin-bottom: 1rem;">
+        <div style="padding-top: 1.5rem; border-top: 1px solid var(--border); margin-top: 1.5rem;">
+            <div class="nav-item" onclick="toggleTheme()">
                 <i id="theme-icon" class="fas fa-moon"></i>
-                <span>Switch Theme</span>
+                <span>Switch Appearance</span>
             </div>
-            <button id="logout-btn" class="btn btn-outline"
-                style="width: 100%; justify-content: flex-start; border: none; padding: 0.85rem 1.25rem; border-radius: 12px;">
+            <button id="logout-btn" class="nav-item"
+                style="width: 100%; border: none; background: transparent; padding-left: 1.25rem;">
                 <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
+                <span>Disconnect</span>
             </button>
         </div>
     </div>
@@ -130,6 +130,7 @@
                             <th>Clicks</th>
                             <th>Conv</th>
                             <th>CR %</th>
+                            <th style="text-align: right;">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="overview-links-table">
@@ -202,13 +203,12 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Affiliate</th>
-                            <th>Short URL</th>
-                            <th>Ratio</th>
-                            <th>Performance</th>
-                            <th>Created At</th>
-                            <th>Actions</th>
+                            <th>Campaign Identity</th>
+                            <th>Partner Information</th>
+                            <th>Tracking Link</th>
+                            <th>Network Status</th>
+                            <th>Deployment Date</th>
+                            <th style="text-align: right;">Command Center</th>
                         </tr>
                     </thead>
                     <tbody id="links-table"></tbody>

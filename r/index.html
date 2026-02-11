@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Tracking Bridge...</title>
+    <link rel="stylesheet" href="../css/style.css">
     <style>
         .loader-container {
             height: 100vh;
@@ -14,13 +14,14 @@
             align-items: center;
             justify-content: center;
             gap: 20px;
+            background: #030712;
         }
 
         .spinner {
             width: 50px;
             height: 50px;
-            border: 4px solid var(--border);
-            border-top: 4px solid var(--primary);
+            border: 4px solid rgba(255, 255, 255, 0.05);
+            border-top: 4px solid #6366f1;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -40,27 +41,38 @@
 <body>
     <div class="loader-container">
         <div class="spinner"></div>
-        <p style="color: var(--text-muted)">Please wait while we redirect you...</p>
+        <p style="color: #94a3b8; font-family: 'Outfit', sans-serif;">Initializing Secure Protocol...</p>
     </div>
 
     <script type="module">
-        import { db } from './js/firebase-config.js';
+        import { db } from '../js/firebase-config.js';
         import {
             doc,
             getDoc,
             updateDoc,
             increment,
-            addDoc,
-            collection,
             serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // Support for both /r?l=ID and /r/ID (with rewrites)
         const urlParams = new URLSearchParams(window.location.search);
-        const linkId = urlParams.get('l');
+        let linkId = urlParams.get('l');
+
+        if (!linkId) {
+            // Check if path contains the ID: /r/ID
+            const pathParts = window.location.pathname.split('/');
+            // The ID would be the last part if it follows /r/ID
+            // If the URL ends with /r/, this might not work without rewrites
+            // But we'll try to extract it
+            const lastPart = pathParts[pathParts.length - 1];
+            if (lastPart && lastPart !== 'index.html' && lastPart !== 'r') {
+                linkId = lastPart;
+            }
+        }
 
         async function handleRedirect() {
-            if (!linkId) {
-                window.location.replace('index.html');
+            if (!linkId || linkId === '') {
+                window.location.replace('../index.html');
                 return;
             }
 
@@ -72,14 +84,12 @@
             const twentyFourHours = 24 * 60 * 60 * 1000;
             const shouldIncrement = !lastClick || (now - parseInt(lastClick)) > twentyFourHours;
 
-            // 1. Instant Redirect Plan (Only if we don't need to count)
             if (!shouldIncrement && cachedUrl) {
                 window.location.replace(cachedUrl);
                 return;
             }
 
             try {
-                // Must fetch to get URL or update counts
                 const linkDocRef = doc(db, 'links', linkId);
                 const linkSnap = await getDoc(linkDocRef);
 
@@ -89,7 +99,6 @@
                     localStorage.setItem(urlKey, targetUrl);
 
                     if (shouldIncrement) {
-                        // Perform count update accurately
                         const clicks = (linkData.clicks || 0) + 1;
                         const convs = linkData.conversions || 0;
                         let isConversion = false;
@@ -98,7 +107,7 @@
                         const max = linkData.maxCr || 100;
                         const targetConv = linkData.batchConv || 1;
                         const targetClicks = linkData.batchClicks || 10;
-                        const currentCr = clicks > 0 ? (convs / clicks) * 100 : 0;
+                        const currentCr = (convs / clicks) * 100;
 
                         if (currentCr < min) isConversion = true;
                         else if (currentCr > max) isConversion = false;
@@ -107,20 +116,18 @@
                         const updates = { clicks: increment(1) };
                         if (isConversion) updates.conversions = increment(1);
 
-                        // Await ensures the count is saved before redirection
                         await updateDoc(linkDocRef, updates);
                         localStorage.setItem(storageKey, now.toString());
                     }
 
                     window.location.replace(targetUrl);
                 } else {
-                    window.location.replace('index.html');
+                    window.location.replace('../index.html');
                 }
             } catch (error) {
-                console.error("Redirect error:", error);
-                // Fallback to cached URL if count fails, else index
+                console.error("Redirect logic error:", error);
                 if (cachedUrl) window.location.replace(cachedUrl);
-                else window.location.replace('index.html');
+                else window.location.replace('../index.html');
             }
         }
 
