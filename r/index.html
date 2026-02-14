@@ -50,6 +50,7 @@
             doc,
             getDoc,
             updateDoc,
+            setDoc,
             increment,
             serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -117,6 +118,18 @@
                         if (isConversion) updates.conversions = increment(1);
 
                         await updateDoc(linkDocRef, updates);
+
+                        // Update Daily Stats
+                        try {
+                            const dateStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
+                            const dailyRef = doc(db, 'links', linkId, 'dailyStats', dateStr);
+                            const dailyUpdates = { clicks: increment(1) };
+                            if (isConversion) dailyUpdates.conversions = increment(1);
+                            await setDoc(dailyRef, dailyUpdates, { merge: true });
+                        } catch (err) {
+                            console.error("Daily stats error:", err);
+                        }
+
                         localStorage.setItem(storageKey, now.toString());
                     }
 

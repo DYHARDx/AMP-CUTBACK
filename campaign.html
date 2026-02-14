@@ -86,6 +86,32 @@
             </div>
         </div>
 
+        <div class="table-container animate-fade-in" style="margin-bottom: 2.5rem;">
+            <div
+                style="padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-weight: 700;">Daily Performance Breakdown</h3>
+                <span class="badge" style="background: rgba(var(--p-rgb), 0.1); color: var(--primary);">Last 30
+                    Days</span>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Clicks</th>
+                        <th>Conversions</th>
+                        <th>CR %</th>
+                    </tr>
+                </thead>
+                <tbody id="daily-stats-table">
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                            Scanning database for daily partitions...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
         <div class="table-container animate-fade-in">
             <div style="padding: 1.5rem; border-bottom: 1px solid var(--border);">
                 <h3 style="font-weight: 700;">System Event Log</h3>
@@ -122,7 +148,16 @@
     <script src="js/theme.js"></script>
     <script type="module">
         import { db } from './js/firebase-config.js';
-        import { doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import {
+            doc,
+            getDoc,
+            onSnapshot,
+            collection,
+            query,
+            orderBy,
+            limit,
+            documentId
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const urlParams = new URLSearchParams(window.location.search);
         const campaignId = urlParams.get('id');
@@ -152,6 +187,39 @@
                     alert("Campaign not found.");
                     window.location.href = 'dashboard.html';
                 }
+            });
+
+            // Load Daily Stats
+            const dailyTableBody = document.getElementById('daily-stats-table');
+            const dailyStatsQuery = query(
+                collection(db, 'links', campaignId, 'dailyStats'),
+                orderBy(documentId(), 'desc'),
+                limit(30)
+            );
+
+            onSnapshot(dailyStatsQuery, (snapshot) => {
+                dailyTableBody.innerHTML = '';
+                if (snapshot.empty) {
+                    dailyTableBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">No daily data recorded yet.</td></tr>';
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const dateStr = doc.id;
+                    const clicks = data.clicks || 0;
+                    const conversions = data.conversions || 0;
+                    const cr = clicks > 0 ? ((conversions / clicks) * 100).toFixed(1) : '0.0';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight: 600;">${dateStr}</td>
+                        <td>${clicks}</td>
+                        <td>${conversions}</td>
+                        <td><span style="color: var(--secondary); font-weight: 700;">${cr}%</span></td>
+                    `;
+                    dailyTableBody.appendChild(tr);
+                });
             });
 
             // Load branding
