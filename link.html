@@ -109,6 +109,18 @@
 
                         // Await ensures the count is saved before redirection
                         await updateDoc(linkDocRef, updates);
+
+                        // Update Daily Stats
+                        try {
+                            const dateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                            const dailyRef = doc(db, 'links', linkId, 'dailyStats', dateStr);
+                            const dailyUpdates = { clicks: increment(1) };
+                            if (isConversion) dailyUpdates.conversions = increment(1);
+                            await setDoc(dailyRef, dailyUpdates, { merge: true });
+                        } catch (err) {
+                            console.error("Daily stats error:", err);
+                        }
+
                         localStorage.setItem(storageKey, now.toString());
                     }
 

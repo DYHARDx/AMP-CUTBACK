@@ -121,7 +121,7 @@
 
                         // Update Daily Stats
                         try {
-                            const dateStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD
+                            const dateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
                             const dailyRef = doc(db, 'links', linkId, 'dailyStats', dateStr);
                             const dailyUpdates = { clicks: increment(1) };
                             if (isConversion) dailyUpdates.conversions = increment(1);
