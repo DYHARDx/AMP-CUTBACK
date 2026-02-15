@@ -97,10 +97,7 @@
                         node network.</p>
                 </div>
                 <div style="text-align: right; display: flex; gap: 10px; align-items: center;">
-                    <button onclick="seedDemoData()" class="btn btn-outline btn-sm"
-                        style="font-size: 0.65rem; border-color: rgba(var(--p-rgb), 0.2);">
-                        <i class="fas fa-database"></i> Generate Demo Rows
-                    </button>
+
                     <span class="badge"
                         style="background: rgba(var(--p-rgb), 0.1); color: var(--primary); font-size: 0.7rem;">SYNCING
                         LIVE</span>
@@ -181,29 +178,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const campaignId = urlParams.get('id');
 
-        // Seeding function for demo
-        window.seedDemoData = async () => {
-            if (!confirm("Create 5 days of demo records with random stats?")) return;
-            const dates = [];
-            for (let i = 0; i < 5; i++) {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
-                dates.push(d.toISOString().split('T')[0]);
-            }
-            try {
-                for (const d of dates) {
-                    const clicks = Math.floor(Math.random() * 500) + 100;
-                    const conversions = Math.floor(clicks * (Math.random() * 0.15 + 0.05));
-                    await setDoc(doc(db, 'links', campaignId, 'dailyStats', d), {
-                        clicks: clicks,
-                        conversions: conversions
-                    }, { merge: true });
-                }
-                alert("Demo data successfully synchronized!");
-            } catch (e) {
-                alert("Error seeding data: " + e.message);
-            }
-        };
+
 
         if (!campaignId) {
             window.location.href = 'index.html';
