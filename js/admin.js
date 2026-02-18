@@ -109,7 +109,13 @@ const linkAffiliateSelect = document.getElementById('link-affiliate');
 
 onSnapshot(query(collection(db, 'users'), where('role', '==', 'affiliate')), (snapshot) => {
     const editAffiliateSelect = document.getElementById('edit-link-affiliate');
+
+    // Clear existing content to prevent duplication
     if (editAffiliateSelect) editAffiliateSelect.innerHTML = '<option value="">Select an affiliate...</option>';
+    if (linkAffiliateSelect) linkAffiliateSelect.innerHTML = '<option value="">Select an affiliate...</option>';
+    if (affiliatesTable) affiliatesTable.innerHTML = '';
+
+    const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
     docs.forEach((aff) => {
         const id = aff.id;
