@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -48,10 +49,7 @@
                 <i class="fas fa-link"></i>
                 <span>Custom Links</span>
             </div>
-            <div class="nav-item" data-tab="notifications">
-                <i class="fas fa-broadcast-tower"></i>
-                <span>Broadcasts</span>
-            </div>
+
             <div class="nav-item" data-tab="team">
                 <i class="fas fa-user-shield"></i>
                 <span>Team Access</span>
@@ -114,6 +112,27 @@
                     <div id="stat-total-conversions" class="stat-value" style="color: var(--success);">100</div>
                     <div class="stat-label">Conversions</div>
                 </div>
+            </div>
+
+
+
+            <div class="table-container" style="margin-bottom: 2rem;">
+                <div class="table-header">
+                    <h3>Daily Breakdown</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Clicks</th>
+                            <th>Conversions</th>
+                            <th>CR %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="daily-stats-table">
+                        <!-- Content loaded by JS -->
+                    </tbody>
+                </table>
             </div>
 
             <div class="table-container">
@@ -217,58 +236,7 @@
         </div>
 
         <!-- Notifications Tab -->
-        <div id="notifications" class="tab-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                <h1>System Announcements</h1>
-            </div>
 
-            <div class="grid-1-15">
-                <!-- Send Notification -->
-                <div class="glass" style="padding: 2rem; align-self: start;">
-                    <h3 style="margin-bottom: 1.5rem;">Broadcast Message</h3>
-                    <form id="broadcast-form">
-                        <div class="form-group">
-                            <label>Title</label>
-                            <input type="text" id="notif-title" placeholder="e.g. New Campaign Live!" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Message Content</label>
-                            <textarea id="notif-message" rows="4" placeholder="Enter your detailed announcement..."
-                                required
-                                style="width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; color: var(--text);"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Priority</label>
-                            <select id="notif-priority">
-                                <option value="normal">Normal</option>
-                                <option value="high">High (Red Glow)</option>
-                                <option value="low">Low (Ghost)</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
-                            <i class="fas fa-paper-plane"></i> Send to All Affiliates
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Notification History -->
-                <div class="table-container">
-                    <div style="padding: 1rem; border-bottom: 1px solid var(--border);">
-                        <h3 style="font-weight: 600;">Announcement History</h3>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="notif-history-table"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
 
         <!-- Settings Tab -->
         <div id="settings" class="tab-content">

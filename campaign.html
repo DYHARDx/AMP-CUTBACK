@@ -187,7 +187,33 @@
 
         // State Management
         let masterLinkData = null;
-        let dailyStatsRows = null; // null means not yet fetched, [] means empty
+        let dailyStatsRows = null; // Re-added for updateUI compatibility
+        let rawDailyRows = []; // Store raw daily data
+
+        function processStats() {
+            if (!rawDailyRows) return;
+
+            let rows = [...rawDailyRows];
+
+            // Filter out dates before campaign creation
+            if (masterLinkData && masterLinkData.createdAt) {
+                try {
+                    // Check if toDate exists (Firestore Timestamp)
+                    const dateObj = masterLinkData.createdAt.toDate ? masterLinkData.createdAt.toDate() : new Date(masterLinkData.createdAt);
+                    const createdDate = dateObj.toISOString().split('T')[0];
+                    rows = rows.filter(r => r.id >= createdDate);
+                } catch (e) {
+                    console.warn("Date filter error:", e);
+                }
+            }
+
+            // Sort by ID (Date YYYY-MM-DD) descending
+            rows.sort((a, b) => b.id.localeCompare(a.id));
+
+            // Limit to latest 30 records
+            dailyStatsRows = rows.slice(0, 30);
+            updateUI();
+        }
 
         // Consolidated UI Update
         const updateUI = () => {
@@ -306,6 +332,7 @@
             onSnapshot(doc(db, 'links', campaignId), (docSnap) => {
                 if (docSnap.exists()) {
                     masterLinkData = docSnap.data();
+                    processStats(); // Process first to filter
                     updateUI();
                 } else {
                     document.body.innerHTML = `<div style="padding:4rem; text-align:center; font-family:sans-serif;">
@@ -321,12 +348,8 @@
             // daily stats listener - Switch to client-side sorting to bypass index requirement
             const q = query(collection(db, 'links', campaignId, 'dailyStats'));
             onSnapshot(q, (snapshot) => {
-                let rows = snapshot.docs.map(d => ({ id: d.id, data: d.data() }));
-                // Sort by ID (Date YYYY-MM-DD) descending
-                rows.sort((a, b) => b.id.localeCompare(a.id));
-                // Limit to latest 30 records
-                dailyStatsRows = rows.slice(0, 30);
-                updateUI();
+                rawDailyRows = snapshot.docs.map(d => ({ id: d.id, data: d.data() }));
+                processStats(); // Process raw data (filter & sort)
             }, (error) => {
                 console.error("Stats sync error:", error);
                 const table = document.getElementById('daily-stats-table');

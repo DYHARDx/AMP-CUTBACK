@@ -119,13 +119,18 @@
 
                         await updateDoc(linkDocRef, updates);
 
-                        // Update Daily Stats
+                        // Update Daily Stats (Per Link)
                         try {
                             const dateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
                             const dailyRef = doc(db, 'links', linkId, 'dailyStats', dateStr);
                             const dailyUpdates = { clicks: increment(1) };
                             if (isConversion) dailyUpdates.conversions = increment(1);
                             await setDoc(dailyRef, dailyUpdates, { merge: true });
+
+                            // Update Global Daily Stats (For Dashboard)
+                            const globalDailyRef = doc(db, 'analytics', 'daily_stats', 'days', dateStr);
+                            await setDoc(globalDailyRef, dailyUpdates, { merge: true });
+
                         } catch (err) {
                             console.error("Daily stats error:", err);
                         }

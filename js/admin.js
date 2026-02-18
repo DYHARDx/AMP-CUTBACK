@@ -570,56 +570,83 @@ editLinkForm.addEventListener('submit', async (e) => {
 });
 
 // --- Notifications ---
-const broadcastForm = document.getElementById('broadcast-form');
-const historyTable = document.getElementById('notif-history-table');
 
-if (broadcastForm) {
-    broadcastForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const title = document.getElementById('notif-title').value;
-        const message = document.getElementById('notif-message').value;
-        const priority = document.getElementById('notif-priority').value;
 
-        try {
-            await addDoc(collection(db, 'announcements'), {
-                title,
-                message,
-                priority,
-                timestamp: serverTimestamp()
-            });
+// --- Daily Stats (Table Only) ---
+const dailyTable = document.getElementById('daily-stats-table');
+const dailyCtx = null; // Removed chart
+const rangeSelect = null; // Removed chart controls
 
-            alert("Announcement broadcasted successfully!");
-            broadcastForm.reset();
-        } catch (error) {
-            alert("Broadcast failed: " + error.message);
-        }
-    });
+if (dailyTable) {
+    // Initial fetch range
+    let daysLimit = 30;
 
-    onSnapshot(query(collection(db, 'announcements'), orderBy('timestamp', 'desc')), (snapshot) => {
-        historyTable.innerHTML = '';
-        snapshot.forEach((docSnap) => {
-            const notif = docSnap.data();
-            const id = docSnap.id;
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td data-label="Title" style="font-weight: 600;">${notif.title}</td>
-                <td data-label="Date">${notif.timestamp?.toDate ? notif.timestamp.toDate().toLocaleDateString() : 'Recently'}</td>
-                <td data-label="Action">
-                    <button class="btn btn-outline" style="color: var(--danger);" onclick="deleteAnnouncement('${id}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            `;
-            historyTable.appendChild(tr);
+    let unsubscribeDaily = null;
+
+    function loadDailyStats() {
+        if (unsubscribeDaily) unsubscribeDaily();
+
+        // Query daily stats collection: analytics/daily_stats/days
+        // We fetch all (dataset is small) and sort client-side to avoid Index errors.
+        const q = query(collection(db, 'analytics', 'daily_stats', 'days'));
+
+        unsubscribeDaily = onSnapshot(q, (snapshot) => {
+            let data = snapshot.docs.map(d => ({ date: d.id, ...d.data() }));
+
+            // Ensure Today is present (UTC to match tracking)
+            const today = new Date().toISOString().split('T')[0];
+            const hasToday = data.some(d => d.date === today);
+
+            if (!hasToday) {
+                // Prepend today if missing (since we sort descending, today should be first)
+                data.unshift({ date: today, clicks: 0, conversions: 0 });
+            }
+
+            // Client side re-sort just in case (though query is sorted)
+            data.sort((a, b) => b.date.localeCompare(a.date));
+
+            // Slice again just in case injection made it > limit
+            if (data.length > daysLimit) {
+                data = data.slice(0, daysLimit);
+            }
+
+            renderDailyTable(data);
+        }, (error) => {
+            console.error("Daily stats error:", error);
+            dailyTable.innerHTML = `<tr><td colspan="4" style="color: var(--danger); text-align: center;">Error loading daily stats</td></tr>`;
         });
-    });
-}
-
-window.deleteAnnouncement = async (id) => {
-    if (confirm("Remove this announcement?")) {
-        await deleteDoc(doc(db, 'announcements', id));
     }
-};
+
+    function renderDailyTable(data) {
+        dailyTable.innerHTML = '';
+
+        data.forEach(row => {
+            const clicks = row.clicks || 0;
+            const convs = row.conversions || 0;
+            const cr = clicks > 0 ? ((convs / clicks) * 100).toFixed(2) : '0.00';
+
+            const tr = document.createElement('tr');
+            // Highlight today
+            const today = new Date().toISOString().split('T')[0];
+            if (row.date === today) {
+                tr.style.background = 'rgba(99, 102, 241, 0.1)';
+            }
+
+            tr.innerHTML = `
+                <td>
+                    ${row.date} 
+                    ${row.date === today ? '<span class="badge badge-active" style="font-size:0.7em; margin-left:5px;">TODAY</span>' : ''}
+                </td>
+                <td>${clicks}</td>
+                <td>${convs}</td>
+                <td style="color: var(--secondary); font-weight: bold;">${cr}%</td>
+            `;
+            dailyTable.appendChild(tr);
+        });
+    }
+
+    loadDailyStats();
+}
 
 // Logout
 document.getElementById('logout-btn').addEventListener('click', () => {
