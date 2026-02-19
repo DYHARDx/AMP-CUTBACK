@@ -77,15 +77,14 @@
                 return;
             }
 
-            const storageKey = `last_click_date_${linkId}`;
             const urlKey = `target_url_${linkId}`;
-            const lastClickDate = localStorage.getItem(storageKey);
             const cachedUrl = localStorage.getItem(urlKey);
 
-            // Use Local Date (YYYY-MM-DD) for "Calendar Day" logic
-            // This resets the count at midnight local time, not after 24 hours.
+            // SECURITY REMOVED: Always increment logic
+            // We removed the 'last_click_date' check entirely.
+            // Every hit is a new click.
             const todayStr = new Date().toLocaleDateString('en-CA');
-            const shouldIncrement = lastClickDate !== todayStr;
+
 
             // REMOVED: Early return with cachedUrl. We always want to fetch latest data/URL.
             // If network fails, we'll fall back to cache in the catch block.
@@ -101,7 +100,8 @@
                     // Update cache for fallback
                     localStorage.setItem(urlKey, targetUrl);
 
-                    if (shouldIncrement) {
+                    // Always increment click count, no restrictions
+                    if (true) {
                         const clicks = (linkData.clicks || 0) + 1;
                         const convs = linkData.conversions || 0;
                         let isConversion = false;

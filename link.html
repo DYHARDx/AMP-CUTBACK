@@ -69,15 +69,11 @@
             const lastClickDate = localStorage.getItem(storageKey);
             const cachedUrl = localStorage.getItem(urlKey);
 
-            // Calendar Day Logic (Resets at midnight)
-            const todayStr = new Date().toLocaleDateString('en-CA');
-            const shouldIncrement = lastClickDate !== todayStr;
+            // SECURITY REMOVED: Every click counts
+            const shouldIncrement = true;
 
-            // 1. Instant Redirect Plan (Only if we don't need to count)
-            if (!shouldIncrement && cachedUrl) {
-                window.location.replace(cachedUrl);
-                return;
-            }
+            // REMOVED: Instant Redirect Plan (we must always count now)
+
 
             try {
                 // Must fetch to get URL or update counts
