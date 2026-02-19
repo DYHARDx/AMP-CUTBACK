@@ -137,7 +137,16 @@
             }
         }
 
-        handleRedirect();
+        // Safety Timeout (5 seconds)
+        const safetyTimeout = setTimeout(() => {
+            console.warn("Redirect time limit exceeded. Forcing fallback.");
+            const urlKey = `target_url_${linkId}`;
+            const cachedUrl = localStorage.getItem(urlKey);
+            if (cachedUrl) window.location.replace(cachedUrl);
+            else window.location.replace('index.html');
+        }, 5000);
+
+        handleRedirect().then(() => clearTimeout(safetyTimeout));
     </script>
 </body>
 
