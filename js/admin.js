@@ -130,6 +130,9 @@ onSnapshot(query(collection(db, 'users'), where('role', '==', 'affiliate')), (sn
                 <button class="btn btn-outline" onclick="toggleAffiliate('${id}', ${aff.active})">
                     ${aff.active ? 'Deactivate' : 'Activate'}
                 </button>
+                <button class="btn btn-outline" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2); margin-left: 5px;" onclick="deleteAffiliate('${id}')" title="Delete User">
+                    <i class="fas fa-trash"></i>
+                </button>
             </td>
         `;
         affiliatesTable.appendChild(tr);
@@ -158,6 +161,17 @@ onSnapshot(query(collection(db, 'users'), where('role', '==', 'affiliate')), (sn
 // Global functions for inline usage
 window.toggleAffiliate = async (id, currentStatus) => {
     await updateDoc(doc(db, 'users', id), { active: !currentStatus });
+};
+
+window.deleteAffiliate = async (id) => {
+    if (confirm("Are you sure you want to PERMANENTLY delete this affiliate?\n\nThis will remove their access immediately.")) {
+        try {
+            await deleteDoc(doc(db, 'users', id));
+            // Note: This only deletes the database record. The Auth account remains but they won't be able to login if validation checks DB.
+        } catch (error) {
+            alert("Error deleting affiliate: " + error.message);
+        }
+    }
 };
 
 const addAffiliateForm = document.getElementById('add-affiliate-form');
