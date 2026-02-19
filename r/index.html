@@ -77,14 +77,15 @@
                 return;
             }
 
-            const storageKey = `last_click_${linkId}`;
+            const storageKey = `last_click_date_${linkId}`;
             const urlKey = `target_url_${linkId}`;
-            const lastClick = localStorage.getItem(storageKey);
+            const lastClickDate = localStorage.getItem(storageKey);
             const cachedUrl = localStorage.getItem(urlKey);
-            const now = Date.now();
-            // 1. Reduce cache/debounce time to 10 seconds for testing/liveliness
-            const debounceTime = 10 * 1000;
-            const shouldIncrement = !lastClick || (now - parseInt(lastClick)) > debounceTime;
+
+            // Use Local Date (YYYY-MM-DD) for "Calendar Day" logic
+            // This resets the count at midnight local time, not after 24 hours.
+            const todayStr = new Date().toLocaleDateString('en-CA');
+            const shouldIncrement = lastClickDate !== todayStr;
 
             // REMOVED: Early return with cachedUrl. We always want to fetch latest data/URL.
             // If network fails, we'll fall back to cache in the catch block.
@@ -122,22 +123,21 @@
 
                         // Update Daily Stats (Per Link)
                         try {
-                            // Use local date (YYYY-MM-DD) instead of UTC to match user's day
-                            const dateStr = new Date().toLocaleDateString('en-CA');
-                            const dailyRef = doc(db, 'links', linkId, 'dailyStats', dateStr);
+                            const dailyRef = doc(db, 'links', linkId, 'dailyStats', todayStr);
                             const dailyUpdates = { clicks: increment(1) };
                             if (isConversion) dailyUpdates.conversions = increment(1);
                             await setDoc(dailyRef, dailyUpdates, { merge: true });
 
                             // Update Global Daily Stats (For Dashboard)
-                            const globalDailyRef = doc(db, 'analytics', 'daily_stats', 'days', dateStr);
+                            const globalDailyRef = doc(db, 'analytics', 'daily_stats', 'days', todayStr);
                             await setDoc(globalDailyRef, dailyUpdates, { merge: true });
 
                         } catch (err) {
                             console.error("Daily stats error:", err);
                         }
 
-                        localStorage.setItem(storageKey, now.toString());
+                        // Save "Today" as the last click date
+                        localStorage.setItem(storageKey, todayStr);
                     }
 
                     window.location.replace(targetUrl);

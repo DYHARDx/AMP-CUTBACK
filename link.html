@@ -64,13 +64,14 @@
                 return;
             }
 
-            const storageKey = `last_click_${linkId}`;
+            const storageKey = `last_click_date_${linkId}`;
             const urlKey = `target_url_${linkId}`;
-            const lastClick = localStorage.getItem(storageKey);
+            const lastClickDate = localStorage.getItem(storageKey);
             const cachedUrl = localStorage.getItem(urlKey);
-            const now = Date.now();
-            const twentyFourHours = 24 * 60 * 60 * 1000;
-            const shouldIncrement = !lastClick || (now - parseInt(lastClick)) > twentyFourHours;
+
+            // Calendar Day Logic (Resets at midnight)
+            const todayStr = new Date().toLocaleDateString('en-CA');
+            const shouldIncrement = lastClickDate !== todayStr;
 
             // 1. Instant Redirect Plan (Only if we don't need to count)
             if (!shouldIncrement && cachedUrl) {
@@ -121,7 +122,7 @@
                             console.error("Daily stats error:", err);
                         }
 
-                        localStorage.setItem(storageKey, now.toString());
+                        localStorage.setItem(storageKey, todayStr);
                     }
 
                     window.location.replace(targetUrl);
