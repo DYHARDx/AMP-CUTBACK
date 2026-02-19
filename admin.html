@@ -253,7 +253,10 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </form>
+
             </div>
+
+
         </div>
     </main>
 
@@ -445,6 +448,62 @@
                     <button type="submit" class="btn btn-primary" style="flex: 1;">Grant Access</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div id="recovery-modal" class="modal">
+        <div class="modal-content glass animate-fade-in" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-database"></i> Data Recovery Wizard</h2>
+                <button class="close-modal" onclick="closeModal('recovery-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div
+                style="padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid rgba(16, 185, 129, 0.2);">
+                <h4 style="color: var(--success); margin-bottom: 0.5rem;">Snapshot Found (Feb 18)</h4>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">We found records for <strong>9,522 Clicks</strong>
+                    and <strong>768 Conversions</strong>.</p>
+                <p style="font-size: 0.8rem; opacity: 0.8;">Please distribute these numbers back to your links below to
+                    complete restoration.</p>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 0.5rem;">
+                <button onclick="autoDistribute()" class="btn btn-outline btn-sm"
+                    style="border-style: dashed; opacity: 0.8; font-size: 0.8rem;">
+                    <i class="fas fa-magic"></i> I don't remember - Auto Distribute
+                </button>
+            </div>
+
+            <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Link Name</th>
+                            <th style="width: 150px;">Restore Clicks</th>
+                            <th style="width: 150px;">Restore Conv.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recovery-links-table">
+                        <!-- Links loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="stats-grid"
+                style="margin-top: 1.5rem; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; width: 100%;">
+                    <span>Target: <strong>9501</strong></span>
+                    <span id="rec-diff-clicks" style="color: var(--warning);">Assigned: 0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; width: 100%;">
+                    <span>Target: <strong>764</strong></span>
+                    <span id="rec-diff-conv" style="color: var(--warning);">Assigned: 0</span>
+                </div>
+            </div>
+
+            <button onclick="commitRecovery()" class="btn btn-primary"
+                style="width: 100%; margin-top: 1.5rem; background: var(--success);">
+                <i class="fas fa-check-circle"></i> Commit Data Restoration
+            </button>
         </div>
     </div>
 

@@ -82,13 +82,12 @@
             const lastClick = localStorage.getItem(storageKey);
             const cachedUrl = localStorage.getItem(urlKey);
             const now = Date.now();
-            const twentyFourHours = 24 * 60 * 60 * 1000;
-            const shouldIncrement = !lastClick || (now - parseInt(lastClick)) > twentyFourHours;
+            // 1. Reduce cache/debounce time to 10 seconds for testing/liveliness
+            const debounceTime = 10 * 1000;
+            const shouldIncrement = !lastClick || (now - parseInt(lastClick)) > debounceTime;
 
-            if (!shouldIncrement && cachedUrl) {
-                window.location.replace(cachedUrl);
-                return;
-            }
+            // REMOVED: Early return with cachedUrl. We always want to fetch latest data/URL.
+            // If network fails, we'll fall back to cache in the catch block.
 
             try {
                 const linkDocRef = doc(db, 'links', linkId);
@@ -97,6 +96,8 @@
                 if (linkSnap.exists()) {
                     const linkData = linkSnap.data();
                     const targetUrl = linkData.originalUrl;
+
+                    // Update cache for fallback
                     localStorage.setItem(urlKey, targetUrl);
 
                     if (shouldIncrement) {
@@ -121,7 +122,8 @@
 
                         // Update Daily Stats (Per Link)
                         try {
-                            const dateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                            // Use local date (YYYY-MM-DD) instead of UTC to match user's day
+                            const dateStr = new Date().toLocaleDateString('en-CA');
                             const dailyRef = doc(db, 'links', linkId, 'dailyStats', dateStr);
                             const dailyUpdates = { clicks: increment(1) };
                             if (isConversion) dailyUpdates.conversions = increment(1);
@@ -149,7 +151,16 @@
             }
         }
 
-        handleRedirect();
+        // Safety Timeout (5 seconds) - If Firebase fails or hangs
+        const safetyTimeout = setTimeout(() => {
+            console.warn("Redirect time limit exceeded. Forcing fallback.");
+            const urlKey = `target_url_${linkId}`;
+            const cachedUrl = localStorage.getItem(urlKey);
+            if (cachedUrl) window.location.replace(cachedUrl);
+            else window.location.replace('../index.html');
+        }, 5000);
+
+        handleRedirect().then(() => clearTimeout(safetyTimeout));
     </script>
 </body>
 
